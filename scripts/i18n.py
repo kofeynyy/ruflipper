@@ -45,7 +45,7 @@ def fnv1a(data: bytes) -> int:
 
 
 # TR("...") with C string literals, adjacent literals are concatenated
-TR_RE = re.compile(r'\bTR\(\s*((?:"(?:[^"\\]|\\.)*"\s*)+)\)')
+TR_RE = re.compile(r'\bTR(?:_NOOP)?\(\s*((?:"(?:[^"\\]|\\.)*"\s*)+)\)')
 LIT_RE = re.compile(r'"((?:[^"\\]|\\.)*)"')
 C_ESC = {"n": "\n", "t": "\t", "r": "\r", "\\": "\\", '"': '"', "'": "'"}
 
@@ -65,6 +65,9 @@ def extract_keys() -> dict:
             if path.suffix not in (".c", ".h", ".cpp"):
                 continue
             text = path.read_text(encoding="utf-8", errors="replace")
+            # blank out comments (keeping line numbers) so examples in docs are not strings
+            text = re.sub(r"/\*.*?\*/", lambda c: re.sub(r"[^\n]", " ", c.group(0)), text, flags=re.S)
+            text = re.sub(r"(?m)^\s*//.*$", "", text)
             for m in TR_RE.finditer(text):
                 key = c_unescape("".join(LIT_RE.findall(m.group(1))))
                 line = text.count("\n", 0, m.start()) + 1

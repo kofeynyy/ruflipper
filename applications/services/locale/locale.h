@@ -132,6 +132,10 @@ const char* locale_tr(const char* key);
 
 #define TR(text) locale_tr(text)
 
+/** Mark a string for translation without translating it here, e.g. in a static
+ * table: use TR() on the element where it is shown. */
+#define TR_NOOP(text) text
+
 /** Get the current UI language code
  *
  * @return     language code, "en" by default

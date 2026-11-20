@@ -1,0 +1,78 @@
+# Localization
+
+The UI language can be changed in **Settings → System → Language**. English is built in; every
+other language is a pack file on the SD card, `/ext/lang/<code>.lang`, so languages can be added
+without rebuilding the firmware.
+
+## Marking strings
+
+```c
+#include <locale/locale.h>
+
+submenu_add_item(submenu, TR("Saved"), ...);          // translated when it runs
+static const char* const names[] = {TR_NOOP("Left"), TR_NOOP("Right")};   // in a static table:
+variable_item_set_current_value_text(item, TR(names[index]));              // translate where it is shown
+```
+
+The English text is the key. With English selected, or when a pack has no translation for a
+string, `TR()` returns the text unchanged, so a missing translation is never an error.
+
+Rules:
+
+- Pass a string literal, optionally split in several adjacent literals. `TR(variable)` cannot be
+  extracted by the tooling: use `TR_NOOP("...")` where the literal is, and `TR(variable)` where
+  it is displayed.
+- Do not call `TR()` from the storage service: lookups wait for it.
+- Some widgets keep the pointer instead of copying the text (for example the labels of
+  `variable_item_list`). The pointer returned by `TR()` stays valid until the language is
+  changed twice. Rebuild such widgets after a language change, as the system settings app does.
+- Keep texts short: Russian is 20-30% longer than English. Check the result with
+  `scripts/i18n_preview.py`.
+
+## Tooling
+
+`scripts/i18n.py`:
+
+| Command | What it does |
+|---|---|
+| `extract [-o file]` | list all `TR("...")` / `TR_NOOP("...")` strings of the sources |
+| `check assets/lang/ru.json` | report missing, unused and empty translations (exit code 1 on missing) |
+| `pack assets/lang/ru.json -o ru.lang` | build the binary pack |
+| `lookup ru.lang "Text"` | read a string from a pack |
+
+Translation sources are JSON files in `assets/lang/`: `{"English text": "Translation"}` plus
+`"@@code"` (language code) and `"@@name"` (name shown in the menu). The Russian pack that ships with
+the firmware is `applications/services/locale/resources/lang/ru.lang`; rebuild it after changing
+`assets/lang/ru.json`:
+
+```
+python scripts/i18n.py pack assets/lang/ru.json -o applications/services/locale/resources/lang/ru.lang
+```
+
+To add a language, copy `assets/lang/ru.json`, translate it, and put the packed file in
+`/ext/lang/<code>.lang` (codes are 1-7 characters from `a-z 0-9 _ -`).
+
+## Pack format
+
+Little endian. Keys are not stored, only a 32-bit FNV-1a hash of each key; the tool refuses to
+build a pack with colliding hashes.
+
+```
+0   char[4]  magic "FLNG"
+4   u16      version = 1
+6   u16      reserved = 0
+8   u32      entry count N
+12  u32      offset of the string pool = 16 + 8 * N
+16  N * { u32 hash, u32 offset }    sorted by hash; offset is relative to the pool
+... pool of NUL-terminated UTF-8 strings
+```
+
+The firmware searches the table in place on the SD card (binary search) and keeps what it
+finds in a cache of at most 96 strings / 12 KB, so RAM use is bounded. Strings that do not fit
+the cache are shown in English.
+
+## Fonts
+
+`FontPrimary` and `FontSecondary` contain Latin and Cyrillic glyphs (see
+`scripts/i18n_font_primary.py`, `scripts/i18n_font_patch.py`). Text wrapping and truncation in
+`elements.c` work on UTF-8 characters, not bytes. `FontKeyboard` is still ASCII only.

@@ -2,15 +2,16 @@
 #include <loader/loader.h>
 #include <lib/toolbox/value_index.h>
 #include <locale/locale.h>
+#include <string.h>
 
 const char* const log_level_text[] = {
-    "Default",
-    "None",
-    "Error",
-    "Warning",
-    "Info",
-    "Debug",
-    "Trace",
+    TR_NOOP("Default"),
+    TR_NOOP("None"),
+    TR_NOOP("Error"),
+    TR_NOOP("Warning"),
+    TR_NOOP("Info"),
+    TR_NOOP("Debug"),
+    TR_NOOP("Trace"),
 };
 
 const uint32_t log_level_value[] = {
@@ -25,14 +26,14 @@ const uint32_t log_level_value[] = {
 
 static void log_level_changed(VariableItem* item) {
     uint8_t index = variable_item_get_current_value_index(item);
-    variable_item_set_current_value_text(item, log_level_text[index]);
+    variable_item_set_current_value_text(item, TR(log_level_text[index]));
     furi_hal_rtc_set_log_level(log_level_value[index]);
 }
 
 const char* const log_device_text[] = {
     "USART",
     "LPUART",
-    "None",
+    TR_NOOP("None"),
 };
 
 const uint32_t log_device_value[] = {
@@ -42,7 +43,7 @@ const uint32_t log_device_value[] = {
 
 static void log_device_changed(VariableItem* item) {
     uint8_t index = variable_item_get_current_value_index(item);
-    variable_item_set_current_value_text(item, log_device_text[index]);
+    variable_item_set_current_value_text(item, TR(log_device_text[index]));
     furi_hal_rtc_set_log_device(log_device_value[index]);
 }
 
@@ -75,13 +76,13 @@ static void log_baud_rate_changed(VariableItem* item) {
 }
 
 const char* const debug_text[] = {
-    "OFF",
-    "ON",
+    TR_NOOP("OFF"),
+    TR_NOOP("ON"),
 };
 
 static void debug_changed(VariableItem* item) {
     uint8_t index = variable_item_get_current_value_index(item);
-    variable_item_set_current_value_text(item, debug_text[index]);
+    variable_item_set_current_value_text(item, TR(debug_text[index]));
     if(index) {
         furi_hal_rtc_set_flag(FuriHalRtcFlagDebug);
     } else {
@@ -90,11 +91,11 @@ static void debug_changed(VariableItem* item) {
 }
 
 const char* const heap_trace_mode_text[] = {
-    "None",
-    "Main",
+    TR_NOOP("None"),
+    TR_NOOP("Main"),
 #ifdef FURI_DEBUG
-    "Tree",
-    "All",
+    TR_NOOP("Tree"),
+    TR_NOOP("All"),
 #endif
 };
 
@@ -109,13 +110,13 @@ const uint32_t heap_trace_mode_value[] = {
 
 static void heap_trace_mode_changed(VariableItem* item) {
     uint8_t index = variable_item_get_current_value_index(item);
-    variable_item_set_current_value_text(item, heap_trace_mode_text[index]);
+    variable_item_set_current_value_text(item, TR(heap_trace_mode_text[index]));
     furi_hal_rtc_set_heap_track_mode(heap_trace_mode_value[index]);
 }
 
 const char* const mesurement_units_text[] = {
-    "Metric",
-    "Imperial",
+    TR_NOOP("Metric"),
+    TR_NOOP("Imperial"),
 };
 
 const uint32_t mesurement_units_value[] = {
@@ -125,7 +126,7 @@ const uint32_t mesurement_units_value[] = {
 
 static void mesurement_units_changed(VariableItem* item) {
     uint8_t index = variable_item_get_current_value_index(item);
-    variable_item_set_current_value_text(item, mesurement_units_text[index]);
+    variable_item_set_current_value_text(item, TR(mesurement_units_text[index]));
     locale_set_measurement_unit(mesurement_units_value[index]);
 }
 
@@ -164,13 +165,13 @@ static void date_format_changed(VariableItem* item) {
 }
 
 const char* const hand_mode[] = {
-    "Righty",
-    "Lefty",
+    TR_NOOP("Righty"),
+    TR_NOOP("Lefty"),
 };
 
 static void hand_orient_changed(VariableItem* item) {
     uint8_t index = variable_item_get_current_value_index(item);
-    variable_item_set_current_value_text(item, hand_mode[index]);
+    variable_item_set_current_value_text(item, TR(hand_mode[index]));
     if(index) {
         furi_hal_rtc_set_flag(FuriHalRtcFlagHandOrient);
     } else {
@@ -179,13 +180,13 @@ static void hand_orient_changed(VariableItem* item) {
 }
 
 const char* const sleep_method[] = {
-    "Default",
-    "Legacy",
+    TR_NOOP("Default"),
+    TR_NOOP("Legacy"),
 };
 
 static void sleep_method_changed(VariableItem* item) {
     uint8_t index = variable_item_get_current_value_index(item);
-    variable_item_set_current_value_text(item, sleep_method[index]);
+    variable_item_set_current_value_text(item, TR(sleep_method[index]));
     if(index) {
         furi_hal_rtc_set_flag(FuriHalRtcFlagLegacySleep);
     } else {
@@ -194,13 +195,13 @@ static void sleep_method_changed(VariableItem* item) {
 }
 
 const char* const filename_scheme[] = {
-    "Default",
-    "Detailed",
+    TR_NOOP("Default"),
+    TR_NOOP("Detailed"),
 };
 
 static void filename_scheme_changed(VariableItem* item) {
     uint8_t index = variable_item_get_current_value_index(item);
-    variable_item_set_current_value_text(item, filename_scheme[index]);
+    variable_item_set_current_value_text(item, TR(filename_scheme[index]));
     if(index) {
         furi_hal_rtc_set_flag(FuriHalRtcFlagDetailedFilename);
     } else {
@@ -213,69 +214,80 @@ static uint32_t system_settings_exit(void* context) {
     return VIEW_NONE;
 }
 
-SystemSettings* system_settings_alloc(void) {
-    SystemSettings* app = malloc(sizeof(SystemSettings));
+static void language_changed(VariableItem* item) {
+    SystemSettings* app = variable_item_get_context(item);
+    uint8_t index = variable_item_get_current_value_index(item);
+    variable_item_set_current_value_text(item, app->languages[index].name);
+    if(locale_set_language(app->languages[index].code)) {
+        // The list is rebuilt outside of this callback: it frees the item we are in
+        view_dispatcher_send_custom_event(app->view_dispatcher, SystemSettingsEventLanguageChanged);
+    }
+}
 
-    // Load settings
-    app->gui = furi_record_open(RECORD_GUI);
-
-    app->view_dispatcher = view_dispatcher_alloc();
-    view_dispatcher_set_event_callback_context(app->view_dispatcher, app);
-
-    view_dispatcher_attach_to_gui(app->view_dispatcher, app->gui, ViewDispatcherTypeFullscreen);
-
+static void system_settings_fill(SystemSettings* app) {
     VariableItem* item;
     uint8_t value_index;
-    app->var_item_list = variable_item_list_alloc();
+
+    // Language is the first item, it stays on top while the list is rebuilt
+    app->languages_count = locale_get_languages(app->languages, COUNT_OF(app->languages));
+    uint8_t language_index = 0;
+    for(uint8_t i = 0; i < app->languages_count; i++) {
+        if(strcmp(app->languages[i].code, locale_get_language()) == 0) language_index = i;
+    }
+    item = variable_item_list_add(
+        app->var_item_list, TR("Language"), app->languages_count, language_changed, app);
+    variable_item_set_current_value_index(item, language_index);
+    variable_item_set_current_value_text(item, app->languages[language_index].name);
+
 
     item = variable_item_list_add(
-        app->var_item_list, "Hand Orient", COUNT_OF(hand_mode), hand_orient_changed, app);
+        app->var_item_list, TR("Hand Orient"), COUNT_OF(hand_mode), hand_orient_changed, app);
     value_index = furi_hal_rtc_is_flag_set(FuriHalRtcFlagHandOrient) ? 1 : 0;
     variable_item_set_current_value_index(item, value_index);
-    variable_item_set_current_value_text(item, hand_mode[value_index]);
+    variable_item_set_current_value_text(item, TR(hand_mode[value_index]));
 
     item = variable_item_list_add(
         app->var_item_list,
-        "Units",
+        TR("Units"),
         COUNT_OF(mesurement_units_text),
         mesurement_units_changed,
         app);
     value_index = value_index_uint32(
         locale_get_measurement_unit(), mesurement_units_value, COUNT_OF(mesurement_units_value));
     variable_item_set_current_value_index(item, value_index);
-    variable_item_set_current_value_text(item, mesurement_units_text[value_index]);
+    variable_item_set_current_value_text(item, TR(mesurement_units_text[value_index]));
 
     item = variable_item_list_add(
-        app->var_item_list, "Time Format", COUNT_OF(time_format_text), time_format_changed, app);
+        app->var_item_list, TR("Time Format"), COUNT_OF(time_format_text), time_format_changed, app);
     value_index = value_index_uint32(
         locale_get_time_format(), time_format_value, COUNT_OF(time_format_value));
     variable_item_set_current_value_index(item, value_index);
     variable_item_set_current_value_text(item, time_format_text[value_index]);
 
     item = variable_item_list_add(
-        app->var_item_list, "Date Format", COUNT_OF(date_format_text), date_format_changed, app);
+        app->var_item_list, TR("Date Format"), COUNT_OF(date_format_text), date_format_changed, app);
     value_index = value_index_uint32(
         locale_get_date_format(), date_format_value, COUNT_OF(date_format_value));
     variable_item_set_current_value_index(item, value_index);
     variable_item_set_current_value_text(item, date_format_text[value_index]);
 
     item = variable_item_list_add(
-        app->var_item_list, "Log Level", COUNT_OF(log_level_text), log_level_changed, app);
+        app->var_item_list, TR("Log Level"), COUNT_OF(log_level_text), log_level_changed, app);
     value_index = value_index_uint32(
         furi_hal_rtc_get_log_level(), log_level_value, COUNT_OF(log_level_text));
     variable_item_set_current_value_index(item, value_index);
-    variable_item_set_current_value_text(item, log_level_text[value_index]);
+    variable_item_set_current_value_text(item, TR(log_level_text[value_index]));
 
     item = variable_item_list_add(
-        app->var_item_list, "Log Device", COUNT_OF(log_device_text), log_device_changed, app);
+        app->var_item_list, TR("Log Device"), COUNT_OF(log_device_text), log_device_changed, app);
     value_index = value_index_uint32(
         furi_hal_rtc_get_log_device(), log_device_value, COUNT_OF(log_device_text));
     variable_item_set_current_value_index(item, value_index);
-    variable_item_set_current_value_text(item, log_device_text[value_index]);
+    variable_item_set_current_value_text(item, TR(log_device_text[value_index]));
 
     item = variable_item_list_add(
         app->var_item_list,
-        "Log Baud Rate",
+        TR("Log Baud Rate"),
         COUNT_OF(log_baud_rate_text),
         log_baud_rate_changed,
         app);
@@ -285,14 +297,14 @@ SystemSettings* system_settings_alloc(void) {
     variable_item_set_current_value_text(item, log_baud_rate_text[value_index]);
 
     item = variable_item_list_add(
-        app->var_item_list, "Debug", COUNT_OF(debug_text), debug_changed, app);
+        app->var_item_list, TR("Debug"), COUNT_OF(debug_text), debug_changed, app);
     value_index = furi_hal_rtc_is_flag_set(FuriHalRtcFlagDebug) ? 1 : 0;
     variable_item_set_current_value_index(item, value_index);
-    variable_item_set_current_value_text(item, debug_text[value_index]);
+    variable_item_set_current_value_text(item, TR(debug_text[value_index]));
 
     item = variable_item_list_add(
         app->var_item_list,
-        "Heap Trace",
+        TR("Heap Trace"),
         COUNT_OF(heap_trace_mode_text),
         heap_trace_mode_changed,
         app);
@@ -300,19 +312,47 @@ SystemSettings* system_settings_alloc(void) {
         furi_hal_rtc_get_heap_track_mode(), heap_trace_mode_value, COUNT_OF(heap_trace_mode_text));
     furi_hal_rtc_set_heap_track_mode(heap_trace_mode_value[value_index]);
     variable_item_set_current_value_index(item, value_index);
-    variable_item_set_current_value_text(item, heap_trace_mode_text[value_index]);
+    variable_item_set_current_value_text(item, TR(heap_trace_mode_text[value_index]));
 
     item = variable_item_list_add(
-        app->var_item_list, "Sleep Method", COUNT_OF(sleep_method), sleep_method_changed, app);
+        app->var_item_list, TR("Sleep Method"), COUNT_OF(sleep_method), sleep_method_changed, app);
     value_index = furi_hal_rtc_is_flag_set(FuriHalRtcFlagLegacySleep) ? 1 : 0;
     variable_item_set_current_value_index(item, value_index);
-    variable_item_set_current_value_text(item, sleep_method[value_index]);
+    variable_item_set_current_value_text(item, TR(sleep_method[value_index]));
 
     item = variable_item_list_add(
-        app->var_item_list, "File Naming", COUNT_OF(filename_scheme), filename_scheme_changed, app);
+        app->var_item_list, TR("File Naming"), COUNT_OF(filename_scheme), filename_scheme_changed, app);
     value_index = furi_hal_rtc_is_flag_set(FuriHalRtcFlagDetailedFilename) ? 1 : 0;
     variable_item_set_current_value_index(item, value_index);
-    variable_item_set_current_value_text(item, filename_scheme[value_index]);
+    variable_item_set_current_value_text(item, TR(filename_scheme[value_index]));
+}
+
+static bool system_settings_custom_event(void* context, uint32_t event) {
+    SystemSettings* app = context;
+    if(event == SystemSettingsEventLanguageChanged) {
+        variable_item_list_reset(app->var_item_list);
+        system_settings_fill(app);
+        variable_item_list_set_selected_item(app->var_item_list, 0);
+        return true;
+    }
+    return false;
+}
+
+SystemSettings* system_settings_alloc(void) {
+    SystemSettings* app = malloc(sizeof(SystemSettings));
+
+    // Load settings
+    app->gui = furi_record_open(RECORD_GUI);
+
+    app->view_dispatcher = view_dispatcher_alloc();
+    view_dispatcher_set_event_callback_context(app->view_dispatcher, app);
+    view_dispatcher_set_custom_event_callback(
+        app->view_dispatcher, system_settings_custom_event);
+
+    view_dispatcher_attach_to_gui(app->view_dispatcher, app->gui, ViewDispatcherTypeFullscreen);
+
+    app->var_item_list = variable_item_list_alloc();
+    system_settings_fill(app);
 
     view_set_previous_callback(
         variable_item_list_get_view(app->var_item_list), system_settings_exit);
