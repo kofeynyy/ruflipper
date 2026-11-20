@@ -253,7 +253,9 @@ class Screen:
     def font_height(self) -> int:
         h = self.font.max_h
         if self.font.name == "u8g2_font_haxrcorp4089_tr":
-            h += 1  # same special case as canvas_current_font_height()
+            h += 1  # same special cases as canvas_current_font_height()
+        elif self.font.name == "u8g2_font_6x12_t_cyrillic":
+            h -= 1
         return h
 
     def max_chars_to_fit(self, text: bytes, x: int) -> int:

@@ -127,6 +127,11 @@ size_t canvas_current_font_height(const Canvas* canvas) {
         font_height += 1;
     }
 
+    // FontKeyboard: 6x12 is 1px taller than the ProFont 11 it replaced, keep the line spacing
+    if(canvas->fb.font == u8g2_font_6x12_t_cyrillic) {
+        font_height -= 1;
+    }
+
     return font_height;
 }
 
@@ -163,7 +168,7 @@ void canvas_set_font(Canvas* canvas, Font font) {
     } else if(font == FontSecondary) {
         u8g2_SetFont(&canvas->fb, u8g2_font_haxrcorp4089_t_cyrillic);
     } else if(font == FontKeyboard) {
-        u8g2_SetFont(&canvas->fb, u8g2_font_profont11_mr);
+        u8g2_SetFont(&canvas->fb, u8g2_font_6x12_t_cyrillic);
     } else if(font == FontBigNumbers) {
         u8g2_SetFont(&canvas->fb, u8g2_font_profont22_tn);
     } else {
