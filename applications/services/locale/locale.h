@@ -102,6 +102,61 @@ void locale_format_date(
     const LocaleDateFormat format,
     const char* separator);
 
+/* ---- UI language ----
+ *
+ * User-visible strings are marked with TR("English text"). The English text is the key:
+ * with the default language (or when a string has no translation) TR() returns it
+ * unchanged. Other languages are packs in /ext/lang/<code>.lang, see
+ * documentation/Localization.md.
+ */
+
+#define LOCALE_LANGUAGE_CODE_SIZE 8
+#define LOCALE_LANGUAGE_NAME_SIZE 24
+#define LOCALE_LANGUAGE_DEFAULT   "en"
+
+typedef struct {
+    char code[LOCALE_LANGUAGE_CODE_SIZE]; /**< e.g. "ru" */
+    char name[LOCALE_LANGUAGE_NAME_SIZE]; /**< display name, e.g. "Русский" */
+} LocaleLanguage;
+
+/** Translate a UI string into the current language
+ *
+ * The returned pointer stays valid until the language has been changed twice: copy
+ * the text if it must live longer than that.
+ *
+ * @param[in]  key  English text, a string literal in practice
+ *
+ * @return     translated text, or key itself when there is no translation
+ */
+const char* locale_tr(const char* key);
+
+#define TR(text) locale_tr(text)
+
+/** Get the current UI language code
+ *
+ * @return     language code, "en" by default
+ */
+const char* locale_get_language(void);
+
+/** Switch the UI language and remember the choice
+ *
+ * @param[in]  code  language code, "en" or the name of a pack in /ext/lang
+ *
+ * @return     true if the language was switched
+ */
+bool locale_set_language(const char* code);
+
+/** List the languages that can be selected
+ *
+ * English is always the first item; the others are the packs found in /ext/lang.
+ *
+ * @param[out] languages  array to fill
+ * @param[in]  max        size of the array
+ *
+ * @return     number of languages written
+ */
+size_t locale_get_languages(LocaleLanguage* languages, size_t max);
+
 #ifdef __cplusplus
 }
 #endif
