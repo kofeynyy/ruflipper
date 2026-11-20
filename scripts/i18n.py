@@ -47,11 +47,41 @@ def fnv1a(data: bytes) -> int:
 # TR("...") with C string literals, adjacent literals are concatenated
 TR_RE = re.compile(r'\bTR(?:_NOOP)?\(\s*((?:"(?:[^"\\]|\\.)*"\s*)+)\)')
 LIT_RE = re.compile(r'"((?:[^"\\]|\\.)*)"')
-C_ESC = {"n": "\n", "t": "\t", "r": "\r", "\\": "\\", '"': '"', "'": "'"}
+# TRC("context", "text"): the key of the translation is "context\x04text"
+TRC_RE = re.compile(r'\bTRC\(\s*((?:"(?:[^"\\]|\\.)*"\s*)+),\s*((?:"(?:[^"\\]|\\.)*"\s*)+)\)')
+CTX_SEP = "\x04"
+C_ESC = {
+    "n": "\n",
+    "t": "\t",
+    "r": "\r",
+    "a": "\a",
+    "b": "\b",
+    "f": "\f",
+    "v": "\v",
+    "e": "\x1b",  # GNU extension, used by the text box markup: \e#bold\e#
+    "\\": "\\",
+    '"': '"',
+    "'": "'",
+    "?": "?",
+}
+C_ESC_RE = re.compile(r"\\(?:([0-7]{1,3})|x([0-9a-fA-F]+)|(.))", re.S)
 
 
 def c_unescape(s: str) -> str:
-    return re.sub(r"\\(.)", lambda m: C_ESC.get(m.group(1), m.group(1)), s)
+    """Decode the escapes of a C string literal, byte values as UTF-8 text."""
+    out = bytearray()
+    pos = 0
+    for m in C_ESC_RE.finditer(s):
+        out += s[pos : m.start()].encode("utf-8")
+        pos = m.end()
+        if m.group(1) is not None:
+            out.append(int(m.group(1), 8) & 0xFF)
+        elif m.group(2) is not None:
+            out.append(int(m.group(2), 16) & 0xFF)
+        else:
+            out += C_ESC.get(m.group(3), m.group(3)).encode("utf-8")
+    out += s[pos:].encode("utf-8")
+    return out.decode("utf-8", errors="replace")
 
 
 def extract_keys() -> dict:
@@ -68,11 +98,42 @@ def extract_keys() -> dict:
             # blank out comments (keeping line numbers) so examples in docs are not strings
             text = re.sub(r"/\*.*?\*/", lambda c: re.sub(r"[^\n]", " ", c.group(0)), text, flags=re.S)
             text = re.sub(r"(?m)^\s*//.*$", "", text)
-            for m in TR_RE.finditer(text):
-                key = c_unescape("".join(LIT_RE.findall(m.group(1))))
+            matches = [(m, c_unescape("".join(LIT_RE.findall(m.group(1))))) for m in TR_RE.finditer(text)]
+            for m in TRC_RE.finditer(text):
+                context = c_unescape("".join(LIT_RE.findall(m.group(1))))
+                matches.append((m, context + CTX_SEP + c_unescape("".join(LIT_RE.findall(m.group(2))))))
+            for m, key in matches:
                 line = text.count("\n", 0, m.start()) + 1
                 found.setdefault(key, []).append(f"{path.relative_to(ROOT).as_posix()}:{line}")
+                # the function the text is passed to decides which font draws it
+                names = re.findall(r"(\w+)\s*\(", text[max(0, m.start() - 250) : m.start()])
+                names = [n for n in names if n not in ("TR", "TR_NOOP")]
+                FUNCS.setdefault(key, set()).add(names[-1] if names else "?")
     return found
+
+
+FUNCS = {}  # key -> names of the functions it is passed to, filled by extract_keys()
+
+# texts drawn with FontPrimary, everything else uses FontSecondary
+PRIMARY_FUNCS = {
+    "submenu_add_item",
+    "submenu_add_lockable_item",
+    "submenu_set_header",
+    "variable_item_list_add",
+    "dialog_ex_set_header",
+    "dialog_ex_set_left_button_text",
+    "dialog_ex_set_center_button_text",
+    "dialog_ex_set_right_button_text",
+    "dialog_message_set_header",
+    "dialog_message_set_buttons",
+    "popup_set_header",
+    "elements_button_left",
+    "elements_button_center",
+    "elements_button_right",
+    "widget_add_button_element",
+}
+
+FMT_RE = re.compile(r"%[-+ #0-9.*]*(?:hh|h|ll|l|z|j|t|L)?[a-zA-Z%]")
 
 
 def build_pack(entries: dict) -> bytes:
@@ -142,13 +203,46 @@ def cmd_check(a):
     missing = sorted(keys - have)
     unused = sorted(have - keys)
     empty = sorted(k for k in have if not tr[k].strip())
+    # printf specifiers must survive the translation, in the same order
+    badfmt = sorted(k for k in have if FMT_RE.findall(k) != FMT_RE.findall(tr[k]))
     print(f"{len(keys)} strings in code, {len(have)} translated")
-    for title, lst in (("missing", missing), ("unused", unused), ("empty", empty)):
+    for title, lst in (
+        ("missing", missing),
+        ("unused", unused),
+        ("empty", empty),
+        ("format specifiers differ", badfmt),
+    ):
         if lst:
             print(f"\n{title} ({len(lst)}):")
             for k in lst:
                 print("  ", repr(k))
-    sys.exit(1 if missing or empty else 0)
+    sys.exit(1 if missing or empty or badfmt else 0)
+
+
+def cmd_widths(a):
+    """Flag translations whose lines are wider than the screen or much wider than the English."""
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import i18n_preview as pv
+
+    extract_keys()
+    fonts = {
+        "primary": pv.Screen(pv.U8g2Font(pv.flipper_font_name("primary"))),
+        "secondary": pv.Screen(pv.U8g2Font(pv.flipper_font_name("secondary"))),
+    }
+    tr = load_json(a.source)
+    shown = 0
+    for key, value in tr.items():
+        if key in META_KEYS or not value.strip():
+            continue
+        funcs = FUNCS.get(key, {"?"})
+        font = "primary" if funcs & PRIMARY_FUNCS else "secondary"
+        scr = fonts[font]
+        en = max(scr.width(line.encode()) for line in key.split("\n"))
+        ru = max(scr.width(line.encode()) for line in value.split("\n"))
+        if ru > pv.SCREEN_W - 2 or (ru > en * a.ratio and ru > a.min_width):
+            shown += 1
+            print(f"{ru:3}px vs {en:3}px {font:9} {key!r} -> {value!r}")
+    print(shown, "strings to review")
 
 
 def cmd_pack(a):
@@ -174,6 +268,11 @@ def main():
     p = sub.add_parser("check")
     p.add_argument("source")
     p.set_defaults(fn=cmd_check)
+    p = sub.add_parser("widths")
+    p.add_argument("source")
+    p.add_argument("--ratio", type=float, default=1.3, help="allowed width growth over English")
+    p.add_argument("--min-width", type=int, default=45, help="ignore lines narrower than this")
+    p.set_defaults(fn=cmd_widths)
     p = sub.add_parser("pack")
     p.add_argument("source")
     p.add_argument("-o", "--out", required=True)

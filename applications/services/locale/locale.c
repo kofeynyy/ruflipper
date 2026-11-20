@@ -129,18 +129,27 @@ void locale_format_date(
 #define LANG_ENTRY_SIZE    8
 #define LANG_META_NAME     "@@name"
 
-#define LANG_CACHE_SLOTS     128 /* power of two */
-#define LANG_CACHE_MAX_ITEMS 96 /* keeps the table at most 75% full */
-#define LANG_CACHE_MAX_BYTES 12288
+#define LANG_CACHE_SLOTS     512 /* power of two, 4 KB */
+#define LANG_CACHE_MAX_ITEMS 384 /* keeps the table at most 75% full */
+#define LANG_CACHE_MAX_BYTES 24576 /* of string data, in 1 KB arena chunks */
+#define LANG_ARENA_CHUNK     1024
 #define LANG_STRING_MAX      255
 #define LANG_RETRY_MS        5000
 #define LANG_RETRY_COUNT     3
 
 typedef struct {
     uint32_t hash;
-    const char* text; /* NULL: the pack has no translation, use the key */
-    bool used;
+    const char* text; /* NULL: free slot, lang_missing: no translation, use the key */
 } LangCacheSlot;
+
+typedef struct LangArena LangArena;
+struct LangArena {
+    LangArena* next;
+    size_t used;
+    char data[LANG_ARENA_CHUNK];
+};
+
+static const char lang_missing = '\0';
 
 typedef struct {
     FuriMutex* mutex;
@@ -151,6 +160,7 @@ typedef struct {
     LangCacheSlot* slots;
     size_t items;
     size_t bytes;
+    LangArena* arena; /* translated strings, never freed: the language is fixed per session */
     bool resolved; /* the saved language has been applied (or there is none) */
     uint8_t retries;
     uint32_t retry_tick;
@@ -348,7 +358,7 @@ static LangCacheSlot* lang_cache_find(LocaleState* s, uint32_t hash, bool* found
     size_t index = hash & (LANG_CACHE_SLOTS - 1);
     for(size_t i = 0; i < LANG_CACHE_SLOTS; i++) {
         LangCacheSlot* slot = &s->slots[(index + i) & (LANG_CACHE_SLOTS - 1)];
-        if(!slot->used) {
+        if(!slot->text) {
             *found = false;
             return slot;
         }
@@ -365,36 +375,50 @@ static const char* lang_translate(LocaleState* s, const char* key) {
     uint32_t hash = lang_hash(key);
     bool found;
     LangCacheSlot* slot = lang_cache_find(s, hash, &found);
-    if(found) return slot->text ? slot->text : key;
+    if(found) return slot->text == &lang_missing ? key : slot->text;
     if(!slot || s->items >= LANG_CACHE_MAX_ITEMS) return key; /* cache full: stay in English */
 
     const char* text = NULL;
     if(lang_pack_find(s->file, s->count, s->pool_offset, hash, s->scratch, sizeof(s->scratch))) {
         size_t size = strlen(s->scratch) + 1;
         if(s->bytes + size > LANG_CACHE_MAX_BYTES) return key;
-        char* copy = malloc(size); /* lives until the device restarts */
-        if(!copy) return key;
+        if(!s->arena || s->arena->used + size > LANG_ARENA_CHUNK) {
+            LangArena* arena = malloc(sizeof(LangArena));
+            if(!arena) return key;
+            arena->next = s->arena;
+            arena->used = 0;
+            s->arena = arena;
+        }
+        char* copy = s->arena->data + s->arena->used; /* lives until the device restarts */
+        s->arena->used += size;
         memcpy(copy, s->scratch, size);
         s->bytes += size;
         text = copy;
     }
 
-    slot->used = true;
     slot->hash = hash;
-    slot->text = text;
+    slot->text = text ? text : &lang_missing;
     s->items++;
     return text ? text : key;
 }
 
+/** Text of a key without its context prefix ("context\004text"). */
+static const char* lang_plain(const char* key) {
+    const char* separator = strchr(key, LOCALE_CONTEXT_SEPARATOR);
+    return separator ? separator + 1 : key;
+}
+
 const char* locale_tr(const char* key) {
     LocaleState* s = locale_state;
-    if(!key || !s) return key;
+    if(!key) return key;
+    if(!s) return lang_plain(key);
 
     furi_check(furi_mutex_acquire(s->mutex, FuriWaitForever) == FuriStatusOk);
     lang_ensure(s);
     const char* result = s->file ? lang_translate(s, key) : key;
     furi_check(furi_mutex_release(s->mutex) == FuriStatusOk);
-    return result;
+    /* no translation: show the English text, without the context */
+    return result == key ? lang_plain(key) : result;
 }
 
 const char* locale_get_language(void) {

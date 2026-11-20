@@ -136,6 +136,15 @@ const char* locale_tr(const char* key);
  * table: use TR() on the element where it is shown. */
 #define TR_NOOP(text) text
 
+#define LOCALE_CONTEXT_SEPARATOR '\004'
+
+/** TR() with a context, for English texts that need different translations in different
+ * places, e.g. TRC("menu", "Saved") (list of saved files) and TRC("done", "Saved") (a
+ * message that something was saved). The key of the translation is "context\004text"
+ * (see scripts/i18n.py); without a translation only the text is shown.
+ */
+#define TRC(context, text) locale_tr(context "\004" text)
+
 /** Get the UI language in use
  *
  * @return     language code, "en" by default
