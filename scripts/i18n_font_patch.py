@@ -78,7 +78,7 @@ class BitWriter:
         return bytes(out)
 
 
-def encode_glyph(font: pv.U8g2Font, dx: int, rows: list) -> bytes:
+def encode_glyph(font: pv.U8g2Font, dx: int, rows: list, y_off: int = 0, x_off: int = 0) -> bytes:
     h, w = len(rows), len(rows[0])
     assert all(len(r) == w for r in rows)
     max0, max1 = (1 << font.bits_0) - 1, (1 << font.bits_1) - 1
@@ -108,8 +108,8 @@ def encode_glyph(font: pv.U8g2Font, dx: int, rows: list) -> bytes:
     bw = BitWriter()
     bw.put(w, font.bits_w)
     bw.put(h, font.bits_h)
-    bw.put(0 + (1 << (font.bits_x - 1)), font.bits_x)  # x offset 0
-    bw.put(0 + (1 << (font.bits_y - 1)), font.bits_y)  # y offset 0 (on the baseline)
+    bw.put(x_off + (1 << (font.bits_x - 1)), font.bits_x)
+    bw.put(y_off + (1 << (font.bits_y - 1)), font.bits_y)  # negative: below the baseline
     bw.put(dx + (1 << (font.bits_dx - 1)), font.bits_dx)
     for a, b in pairs:
         bw.put(a, font.bits_0)
