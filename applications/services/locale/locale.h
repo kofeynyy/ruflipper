@@ -121,8 +121,8 @@ typedef struct {
 
 /** Translate a UI string into the current language
  *
- * The returned pointer stays valid until the language has been changed twice: copy
- * the text if it must live longer than that.
+ * The language is fixed for the whole session, so the returned pointer stays valid until
+ * the device restarts.
  *
  * @param[in]  key  English text, a string literal in practice
  *
@@ -136,17 +136,20 @@ const char* locale_tr(const char* key);
  * table: use TR() on the element where it is shown. */
 #define TR_NOOP(text) text
 
-/** Get the current UI language code
+/** Get the UI language in use
  *
  * @return     language code, "en" by default
  */
 const char* locale_get_language(void);
 
-/** Switch the UI language and remember the choice
+/** Save the UI language for the next start
+ *
+ * The language in use does not change until the device is restarted: the caller is
+ * expected to reboot right after a successful call.
  *
  * @param[in]  code  language code, "en" or the name of a pack in /ext/lang
  *
- * @return     true if the language was switched
+ * @return     true if the choice was saved, false if the pack is missing or invalid
  */
 bool locale_set_language(const char* code);
 

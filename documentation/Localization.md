@@ -1,6 +1,8 @@
 # Localization
 
-The UI language can be changed in **Settings → System → Language**. English is built in; every
+The UI language is chosen in **Settings → System → Language**: OK on that item opens the list of
+languages. After a choice the device restarts and runs in the new language. The language never
+changes while the system is running, which keeps memory use bounded. English is built in; every
 other language is a pack file on the SD card, `/ext/lang/<code>.lang`, so languages can be added
 without rebuilding the firmware.
 
@@ -23,9 +25,9 @@ Rules:
   extracted by the tooling: use `TR_NOOP("...")` where the literal is, and `TR(variable)` where
   it is displayed.
 - Do not call `TR()` from the storage service: lookups wait for it.
-- Some widgets keep the pointer instead of copying the text (for example the labels of
-  `variable_item_list`). The pointer returned by `TR()` stays valid until the language is
-  changed twice. Rebuild such widgets after a language change, as the system settings app does.
+- The language is fixed for the whole session, so the pointer returned by `TR()` stays valid
+  until the device restarts. Widgets that keep the pointer instead of copying the text (for
+  example the labels of `variable_item_list`) are safe.
 - Keep texts short: Russian is 20-30% longer than English. Check the result with
   `scripts/i18n_preview.py`.
 
@@ -69,7 +71,7 @@ build a pack with colliding hashes.
 
 The firmware searches the table in place on the SD card (binary search) and keeps what it
 finds in a cache of at most 96 strings / 12 KB, so RAM use is bounded. Strings that do not fit
-the cache are shown in English.
+the cache are shown in English. The saved choice is the code in `/int/.locale_lang`.
 
 ## Fonts
 

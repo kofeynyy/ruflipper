@@ -115,6 +115,9 @@ void locale_format_date(
  * A language pack is a sorted hash table on the SD card (documentation/Localization.md).
  * Strings are looked up lazily: the first TR() of a string does a binary search in the
  * file, the result is kept in a small cache so later calls cost one hash and one mutex.
+ * The language is fixed for the whole session: it is read once, at the first TR(), and
+ * changing it means saving the choice and restarting the device. That keeps the memory use
+ * bounded and every returned string valid for as long as the system runs.
  * Do not call TR() from the storage service itself: lookups wait for it.
  */
 
@@ -133,12 +136,6 @@ void locale_format_date(
 #define LANG_RETRY_MS        5000
 #define LANG_RETRY_COUNT     3
 
-typedef struct LangString LangString;
-struct LangString {
-    LangString* next;
-    char text[];
-};
-
 typedef struct {
     uint32_t hash;
     const char* text; /* NULL: the pack has no translation, use the key */
@@ -154,8 +151,6 @@ typedef struct {
     LangCacheSlot* slots;
     size_t items;
     size_t bytes;
-    LangString* strings; /* strings handed out for the current language */
-    LangString* old_strings; /* previous language, freed on the next switch */
     bool resolved; /* the saved language has been applied (or there is none) */
     uint8_t retries;
     uint32_t retry_tick;
@@ -269,35 +264,9 @@ static bool lang_pack_find(
     return false;
 }
 
-static void lang_cache_rotate(LocaleState* s) {
-    LangString* item = s->old_strings;
-    while(item) {
-        LangString* next = item->next;
-        free(item);
-        item = next;
-    }
-    s->old_strings = s->strings;
-    s->strings = NULL;
-    if(s->slots) memset(s->slots, 0, sizeof(LangCacheSlot) * LANG_CACHE_SLOTS);
-    s->items = 0;
-    s->bytes = 0;
-}
-
-static void lang_unload(LocaleState* s) {
-    if(s->file) {
-        storage_file_free(s->file);
-        s->file = NULL;
-    }
-    lang_cache_rotate(s);
-    strlcpy(s->code, LOCALE_LANGUAGE_DEFAULT, sizeof(s->code));
-}
-
-/** Switch to a language, must be called with the mutex held. */
+/** Open the pack of a language, must be called with the mutex held, once. */
 static bool lang_load(LocaleState* s, const char* code) {
-    if(strcmp(code, LOCALE_LANGUAGE_DEFAULT) == 0) {
-        lang_unload(s);
-        return true;
-    }
+    if(strcmp(code, LOCALE_LANGUAGE_DEFAULT) == 0) return true;
 
     Storage* storage = furi_record_open(RECORD_STORAGE);
     File* file = NULL;
@@ -307,13 +276,12 @@ static bool lang_load(LocaleState* s, const char* code) {
     furi_record_close(RECORD_STORAGE);
     if(!ok) return false;
 
-    if(!s->slots) s->slots = calloc(LANG_CACHE_SLOTS, sizeof(LangCacheSlot));
+    s->slots = calloc(LANG_CACHE_SLOTS, sizeof(LangCacheSlot));
     if(!s->slots) {
         storage_file_free(file);
         return false;
     }
 
-    lang_unload(s);
     s->file = file;
     s->count = count;
     s->pool_offset = pool_offset;
@@ -338,16 +306,18 @@ static bool lang_settings_read(char* code, size_t size) {
     return len > 0;
 }
 
-static void lang_settings_write(const char* code) {
+static bool lang_settings_write(const char* code) {
     Storage* storage = furi_record_open(RECORD_STORAGE);
     File* file = storage_file_alloc(storage);
+    bool ok = false;
     if(storage_file_open(file, LANG_SETTINGS_PATH, FSAM_WRITE, FSOM_CREATE_ALWAYS)) {
-        storage_file_write(file, code, strlen(code));
+        ok = storage_file_write(file, code, strlen(code)) == strlen(code);
     } else {
         FURI_LOG_E(TAG, "Cannot save language");
     }
     storage_file_free(file);
     furi_record_close(RECORD_STORAGE);
+    return ok;
 }
 
 /** Apply the saved language the first time it is needed, mutex held.
@@ -400,15 +370,13 @@ static const char* lang_translate(LocaleState* s, const char* key) {
 
     const char* text = NULL;
     if(lang_pack_find(s->file, s->count, s->pool_offset, hash, s->scratch, sizeof(s->scratch))) {
-        size_t size = sizeof(LangString) + strlen(s->scratch) + 1;
+        size_t size = strlen(s->scratch) + 1;
         if(s->bytes + size > LANG_CACHE_MAX_BYTES) return key;
-        LangString* item = malloc(size);
-        if(!item) return key;
-        strcpy(item->text, s->scratch);
-        item->next = s->strings;
-        s->strings = item;
+        char* copy = malloc(size); /* lives until the device restarts */
+        if(!copy) return key;
+        memcpy(copy, s->scratch, size);
         s->bytes += size;
-        text = item->text;
+        text = copy;
     }
 
     slot->used = true;
@@ -442,16 +410,21 @@ const char* locale_get_language(void) {
 
 bool locale_set_language(const char* code) {
     furi_check(code);
-    LocaleState* s = locale_state;
-    if(!s || !lang_code_valid(code)) return false;
+    if(!lang_code_valid(code)) return false;
 
-    furi_check(furi_mutex_acquire(s->mutex, FuriWaitForever) == FuriStatusOk);
-    s->resolved = true; /* an explicit choice wins over the saved one */
-    bool ok = lang_load(s, code);
-    furi_check(furi_mutex_release(s->mutex) == FuriStatusOk);
+    if(strcmp(code, LOCALE_LANGUAGE_DEFAULT) != 0) {
+        /* do not save a language whose pack is missing or damaged */
+        Storage* storage = furi_record_open(RECORD_STORAGE);
+        File* file = NULL;
+        uint32_t count = 0;
+        uint32_t pool_offset = 0;
+        bool ok = lang_pack_open(storage, code, &file, &count, &pool_offset);
+        if(ok) storage_file_free(file);
+        furi_record_close(RECORD_STORAGE);
+        if(!ok) return false;
+    }
 
-    if(ok) lang_settings_write(code);
-    return ok;
+    return lang_settings_write(code);
 }
 
 size_t locale_get_languages(LocaleLanguage* languages, size_t max) {

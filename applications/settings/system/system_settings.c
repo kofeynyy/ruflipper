@@ -2,6 +2,7 @@
 #include <loader/loader.h>
 #include <lib/toolbox/value_index.h>
 #include <locale/locale.h>
+#include <power/power_service/power.h>
 #include <string.h>
 
 const char* const log_level_text[] = {
@@ -214,31 +215,69 @@ static uint32_t system_settings_exit(void* context) {
     return VIEW_NONE;
 }
 
-static void language_changed(VariableItem* item) {
-    SystemSettings* app = variable_item_get_context(item);
-    uint8_t index = variable_item_get_current_value_index(item);
-    variable_item_set_current_value_text(item, app->languages[index].name);
-    if(locale_set_language(app->languages[index].code)) {
-        // The list is rebuilt outside of this callback: it frees the item we are in
-        view_dispatcher_send_custom_event(app->view_dispatcher, SystemSettingsEventLanguageChanged);
+static uint32_t system_settings_language_back(void* context) {
+    UNUSED(context);
+    return SystemSettingsViewVarItemList;
+}
+
+static void system_settings_language_selected(void* context, uint32_t index) {
+    SystemSettings* app = context;
+    if(index >= app->languages_count) return;
+
+    const char* code = app->languages[index].code;
+    if(strcmp(code, locale_get_language()) != 0 && locale_set_language(code)) {
+        // The language is read once at start, so a restart is the only way to apply it
+        Power* power = furi_record_open(RECORD_POWER);
+        power_reboot(power, PowerBootModeNormal);
+        furi_record_close(RECORD_POWER);
+    } else {
+        view_dispatcher_switch_to_view(app->view_dispatcher, SystemSettingsViewVarItemList);
     }
 }
 
-static void system_settings_fill(SystemSettings* app) {
+static void system_settings_enter(void* context, uint32_t index) {
+    SystemSettings* app = context;
+    if(index != SystemSettingsItemLanguage) return;
+
+    submenu_reset(app->language_menu);
+    submenu_set_header(app->language_menu, TR("Language"));
+    uint32_t selected = 0;
+    for(uint32_t i = 0; i < app->languages_count; i++) {
+        submenu_add_item(
+            app->language_menu, app->languages[i].name, i, system_settings_language_selected, app);
+        if(strcmp(app->languages[i].code, locale_get_language()) == 0) selected = i;
+    }
+    submenu_set_selected_item(app->language_menu, selected);
+    view_dispatcher_switch_to_view(app->view_dispatcher, SystemSettingsViewLanguage);
+}
+
+SystemSettings* system_settings_alloc(void) {
+    SystemSettings* app = malloc(sizeof(SystemSettings));
+
+    // Load settings
+    app->gui = furi_record_open(RECORD_GUI);
+
+    app->view_dispatcher = view_dispatcher_alloc();
+    view_dispatcher_set_event_callback_context(app->view_dispatcher, app);
+
+    view_dispatcher_attach_to_gui(app->view_dispatcher, app->gui, ViewDispatcherTypeFullscreen);
+
     VariableItem* item;
     uint8_t value_index;
 
-    // Language is the first item, it stays on top while the list is rebuilt
-    app->languages_count = locale_get_languages(app->languages, COUNT_OF(app->languages));
-    uint8_t language_index = 0;
-    for(uint8_t i = 0; i < app->languages_count; i++) {
-        if(strcmp(app->languages[i].code, locale_get_language()) == 0) language_index = i;
-    }
-    item = variable_item_list_add(
-        app->var_item_list, TR("Language"), app->languages_count, language_changed, app);
-    variable_item_set_current_value_index(item, language_index);
-    variable_item_set_current_value_text(item, app->languages[language_index].name);
+    app->var_item_list = variable_item_list_alloc();
 
+    // Language opens a submenu on OK; the choice is applied by restarting the device
+    app->languages_count = locale_get_languages(app->languages, COUNT_OF(app->languages));
+    const char* language_name = app->languages[0].name;
+    for(uint8_t i = 0; i < app->languages_count; i++) {
+        if(strcmp(app->languages[i].code, locale_get_language()) == 0) {
+            language_name = app->languages[i].name;
+        }
+    }
+    item = variable_item_list_add(app->var_item_list, TR("Language"), 1, NULL, app);
+    variable_item_set_current_value_text(item, language_name);
+    variable_item_list_set_enter_callback(app->var_item_list, system_settings_enter, app);
 
     item = variable_item_list_add(
         app->var_item_list, TR("Hand Orient"), COUNT_OF(hand_mode), hand_orient_changed, app);
@@ -325,34 +364,6 @@ static void system_settings_fill(SystemSettings* app) {
     value_index = furi_hal_rtc_is_flag_set(FuriHalRtcFlagDetailedFilename) ? 1 : 0;
     variable_item_set_current_value_index(item, value_index);
     variable_item_set_current_value_text(item, TR(filename_scheme[value_index]));
-}
-
-static bool system_settings_custom_event(void* context, uint32_t event) {
-    SystemSettings* app = context;
-    if(event == SystemSettingsEventLanguageChanged) {
-        variable_item_list_reset(app->var_item_list);
-        system_settings_fill(app);
-        variable_item_list_set_selected_item(app->var_item_list, 0);
-        return true;
-    }
-    return false;
-}
-
-SystemSettings* system_settings_alloc(void) {
-    SystemSettings* app = malloc(sizeof(SystemSettings));
-
-    // Load settings
-    app->gui = furi_record_open(RECORD_GUI);
-
-    app->view_dispatcher = view_dispatcher_alloc();
-    view_dispatcher_set_event_callback_context(app->view_dispatcher, app);
-    view_dispatcher_set_custom_event_callback(
-        app->view_dispatcher, system_settings_custom_event);
-
-    view_dispatcher_attach_to_gui(app->view_dispatcher, app->gui, ViewDispatcherTypeFullscreen);
-
-    app->var_item_list = variable_item_list_alloc();
-    system_settings_fill(app);
 
     view_set_previous_callback(
         variable_item_list_get_view(app->var_item_list), system_settings_exit);
@@ -360,6 +371,12 @@ SystemSettings* system_settings_alloc(void) {
         app->view_dispatcher,
         SystemSettingsViewVarItemList,
         variable_item_list_get_view(app->var_item_list));
+
+    app->language_menu = submenu_alloc();
+    view_set_previous_callback(
+        submenu_get_view(app->language_menu), system_settings_language_back);
+    view_dispatcher_add_view(
+        app->view_dispatcher, SystemSettingsViewLanguage, submenu_get_view(app->language_menu));
 
     view_dispatcher_switch_to_view(app->view_dispatcher, SystemSettingsViewVarItemList);
 
@@ -371,6 +388,8 @@ void system_settings_free(SystemSettings* app) {
     // Variable item list
     view_dispatcher_remove_view(app->view_dispatcher, SystemSettingsViewVarItemList);
     variable_item_list_free(app->var_item_list);
+    view_dispatcher_remove_view(app->view_dispatcher, SystemSettingsViewLanguage);
+    submenu_free(app->language_menu);
     // View dispatcher
     view_dispatcher_free(app->view_dispatcher);
     // Records
