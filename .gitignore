@@ -1,3 +1,7 @@
+# Local Flipper emulator checkout (not part of this repo)
+/Flipper-Zero-Emulator/
+/emulator/
+
 *~
 *.swp
 *.swo
