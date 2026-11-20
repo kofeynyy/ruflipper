@@ -121,6 +121,8 @@ size_t canvas_current_font_height(const Canvas* canvas) {
     furi_check(canvas);
     size_t font_height = u8g2_GetMaxCharHeight(&canvas->fb);
 
+    // The Cyrillic variant already reports a max height 1px larger than the
+    // ASCII-only one, which is exactly what this correction adds there.
     if(canvas->fb.font == u8g2_font_haxrcorp4089_tr) {
         font_height += 1;
     }
@@ -159,7 +161,7 @@ void canvas_set_font(Canvas* canvas, Font font) {
     if(font == FontPrimary) {
         u8g2_SetFont(&canvas->fb, u8g2_font_helvB08_tr);
     } else if(font == FontSecondary) {
-        u8g2_SetFont(&canvas->fb, u8g2_font_haxrcorp4089_tr);
+        u8g2_SetFont(&canvas->fb, u8g2_font_haxrcorp4089_t_cyrillic);
     } else if(font == FontKeyboard) {
         u8g2_SetFont(&canvas->fb, u8g2_font_profont11_mr);
     } else if(font == FontBigNumbers) {
