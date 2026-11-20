@@ -1,6 +1,7 @@
 #include "../hid.h"
 #include "../views.h"
 #include "hid_icons.h"
+#include <locale/locale.h>
 
 static void hid_scene_unpair_dialog_callback(DialogExResult result, void* context) {
     Hid* app = context;
@@ -29,13 +30,13 @@ void hid_scene_unpair_on_enter(void* context) {
     dialog_ex_reset(app->dialog);
     dialog_ex_set_result_callback(app->dialog, hid_scene_unpair_dialog_callback);
     dialog_ex_set_context(app->dialog, app);
-    dialog_ex_set_header(app->dialog, "Unpair the Device?", 64, 3, AlignCenter, AlignTop);
-    dialog_ex_set_left_button_text(app->dialog, "Back");
-    dialog_ex_set_right_button_text(app->dialog, "Unpair");
+    dialog_ex_set_header(app->dialog, TR("Unpair the Device?"), 64, 3, AlignCenter, AlignTop);
+    dialog_ex_set_left_button_text(app->dialog, TR("Back"));
+    dialog_ex_set_right_button_text(app->dialog, TR("Unpair"));
 
     // Un-pair success popup view
     popup_set_icon(app->popup, 48, 6, &I_DolphinDone_80x58);
-    popup_set_header(app->popup, "Done", 14, 15, AlignLeft, AlignTop);
+    popup_set_header(app->popup, TR("Done"), 14, 15, AlignLeft, AlignTop);
     popup_set_timeout(app->popup, 1500);
     popup_set_context(app->popup, app);
     popup_set_callback(app->popup, hid_scene_unpair_popup_callback);

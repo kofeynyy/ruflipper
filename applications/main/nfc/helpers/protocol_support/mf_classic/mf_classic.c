@@ -1,5 +1,6 @@
 #include "mf_classic.h"
 #include "mf_classic_render.h"
+#include <locale/locale.h>
 
 #include <nfc/protocols/mf_classic/mf_classic_poller.h>
 
@@ -120,21 +121,21 @@ static void nfc_scene_read_menu_on_enter_mf_classic(NfcApp* instance) {
     if(!mf_classic_is_card_read(data)) {
         submenu_add_item(
             submenu,
-            "Extract MF Keys",
+            TR("Extract MF Keys"),
             SubmenuIndexDetectReader,
             nfc_protocol_support_common_submenu_callback,
             instance);
 
         submenu_add_item(
             submenu,
-            "Unlock with Dictionary",
+            TR("Unlock with Dictionary"),
             SubmenuIndexDictAttack,
             nfc_protocol_support_common_submenu_callback,
             instance);
 
         submenu_add_item(
             submenu,
-            "Crack nonces in MFKey32",
+            TR("Crack nonces in MFKey32"),
             SubmenuIndexCrackNonces,
             nfc_protocol_support_common_submenu_callback,
             instance);
@@ -162,19 +163,19 @@ static void nfc_scene_saved_menu_on_enter_mf_classic(NfcApp* instance) {
     Submenu* submenu = instance->submenu;
     const MfClassicData* data = nfc_device_get_data(instance->nfc_device, NfcProtocolMfClassic);
 
-    submenu_change_item_label(submenu, SubmenuIndexCommonWrite, "Write to Initial Card");
+    submenu_change_item_label(submenu, SubmenuIndexCommonWrite, TR("Write to Initial Card"));
 
     if(!mf_classic_is_card_read(data)) {
         submenu_add_item(
             submenu,
-            "Extract MF Keys",
+            TR("Extract MF Keys"),
             SubmenuIndexDetectReader,
             nfc_protocol_support_common_submenu_callback,
             instance);
 
         submenu_add_item(
             submenu,
-            "Unlock with Dictionary",
+            TR("Unlock with Dictionary"),
             SubmenuIndexDictAttack,
             nfc_protocol_support_common_submenu_callback,
             instance);
@@ -182,7 +183,7 @@ static void nfc_scene_saved_menu_on_enter_mf_classic(NfcApp* instance) {
 
     submenu_add_item(
         submenu,
-        "Update from Initial Card",
+        TR("Update from Initial Card"),
         SubmenuIndexUpdate,
         nfc_protocol_support_common_submenu_callback,
         instance);

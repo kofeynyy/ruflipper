@@ -1,4 +1,5 @@
 #include "../nfc_app_i.h"
+#include <locale/locale.h>
 
 #include "../helpers/protocol_support/nfc_protocol_support_gui_common.h"
 
@@ -14,7 +15,7 @@ void nfc_scene_set_sak_on_enter(void* context) {
 
     // Setup view
     ByteInput* byte_input = instance->byte_input;
-    byte_input_set_header_text(byte_input, "Enter SAK in hex");
+    byte_input_set_header_text(byte_input, TR("Enter SAK in hex"));
     byte_input_set_result_callback(
         byte_input,
         nfc_protocol_support_common_byte_input_done_callback,

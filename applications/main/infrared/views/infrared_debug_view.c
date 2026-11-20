@@ -1,4 +1,5 @@
 #include "infrared_debug_view.h"
+#include <locale/locale.h>
 
 #include <gui/canvas.h>
 #include <gui/elements.h>
@@ -21,7 +22,7 @@ static void infrared_debug_view_draw_callback(Canvas* canvas, void* model) {
 
     canvas_clear(canvas);
     canvas_set_font(canvas, FontPrimary);
-    elements_multiline_text_aligned(canvas, 64, 0, AlignCenter, AlignTop, "INFRARED monitor\n");
+    elements_multiline_text_aligned(canvas, 64, 0, AlignCenter, AlignTop, TR("INFRARED monitor\n"));
     canvas_set_font(canvas, FontKeyboard);
 
     if(strlen(debug_view_model->text)) {

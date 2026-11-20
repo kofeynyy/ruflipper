@@ -1,4 +1,5 @@
 #include "../ibutton_i.h"
+#include <locale/locale.h>
 
 void ibutton_scene_rpc_on_enter(void* context) {
     UNUSED(context);
@@ -7,7 +8,7 @@ void ibutton_scene_rpc_on_enter(void* context) {
 static void ibutton_rpc_start_emulation(iButton* ibutton) {
     Popup* popup = ibutton->popup;
 
-    popup_set_header(popup, "iButton", 82, 28, AlignCenter, AlignBottom);
+    popup_set_header(popup, TR("iButton"), 82, 28, AlignCenter, AlignBottom);
     popup_set_text(popup, ibutton->key_name, 82, 32, AlignCenter, AlignTop);
     popup_set_icon(popup, 2, 14, &I_iButtonKey_49x44);
 

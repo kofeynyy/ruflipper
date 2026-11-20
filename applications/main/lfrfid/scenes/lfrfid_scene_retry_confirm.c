@@ -1,14 +1,15 @@
 #include "../lfrfid_i.h"
+#include <locale/locale.h>
 
 void lfrfid_scene_retry_confirm_on_enter(void* context) {
     LfRfid* app = context;
     Widget* widget = app->widget;
 
-    widget_add_button_element(widget, GuiButtonTypeLeft, "Retry", lfrfid_widget_callback, app);
-    widget_add_button_element(widget, GuiButtonTypeRight, "Stay", lfrfid_widget_callback, app);
-    widget_add_string_element(widget, 64, 0, AlignCenter, AlignTop, FontPrimary, "Retry Reading?");
+    widget_add_button_element(widget, GuiButtonTypeLeft, TR("Retry"), lfrfid_widget_callback, app);
+    widget_add_button_element(widget, GuiButtonTypeRight, TR("Stay"), lfrfid_widget_callback, app);
+    widget_add_string_element(widget, 64, 0, AlignCenter, AlignTop, FontPrimary, TR("Retry Reading?"));
     widget_add_string_element(
-        widget, 64, 13, AlignCenter, AlignTop, FontSecondary, "All unsaved data will be lost");
+        widget, 64, 13, AlignCenter, AlignTop, FontSecondary, TR("All unsaved data will be lost"));
 
     view_dispatcher_switch_to_view(app->view_dispatcher, LfRfidViewWidget);
 }

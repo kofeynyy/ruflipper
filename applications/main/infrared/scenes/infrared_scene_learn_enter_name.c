@@ -1,5 +1,6 @@
 #include "../infrared_app_i.h"
 #include <dolphin/dolphin.h>
+#include <locale/locale.h>
 
 void infrared_scene_learn_enter_name_on_enter(void* context) {
     InfraredApp* infrared = context;
@@ -20,7 +21,7 @@ void infrared_scene_learn_enter_name_on_enter(void* context) {
             message->command);
     }
 
-    text_input_set_header_text(text_input, "Name the button");
+    text_input_set_header_text(text_input, TR("Name the button"));
     text_input_set_result_callback(
         text_input,
         infrared_text_input_callback,

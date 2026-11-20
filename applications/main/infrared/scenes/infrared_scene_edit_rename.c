@@ -1,4 +1,5 @@
 #include "../infrared_app_i.h"
+#include <locale/locale.h>
 
 #include <string.h>
 #include <toolbox/path.h>
@@ -33,7 +34,7 @@ void infrared_scene_edit_rename_on_enter(void* context) {
 
     const InfraredEditTarget edit_target = infrared->app_state.edit_target;
     if(edit_target == InfraredEditTargetButton) {
-        text_input_set_header_text(text_input, "Name the button");
+        text_input_set_header_text(text_input, TR("Name the button"));
 
         const int32_t current_button_index = infrared->app_state.current_button_index;
         furi_check(current_button_index != InfraredButtonIndexNone);
@@ -45,7 +46,7 @@ void infrared_scene_edit_rename_on_enter(void* context) {
             enter_name_length);
 
     } else if(edit_target == InfraredEditTargetRemote) {
-        text_input_set_header_text(text_input, "Name the remote");
+        text_input_set_header_text(text_input, TR("Name the remote"));
         enter_name_length = INFRARED_MAX_REMOTE_NAME_LENGTH;
         strlcpy(infrared->text_store[0], infrared_remote_get_name(remote), enter_name_length);
 

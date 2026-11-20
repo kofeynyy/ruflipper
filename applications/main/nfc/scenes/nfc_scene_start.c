@@ -1,5 +1,6 @@
 #include "../nfc_app_i.h"
 #include <dolphin/dolphin.h>
+#include <locale/locale.h>
 
 enum SubmenuIndex {
     SubmenuIndexRead,
@@ -27,22 +28,22 @@ void nfc_scene_start_on_enter(void* context) {
     // Reset detected protocols list
     nfc_detected_protocols_reset(nfc->detected_protocols);
 
-    submenu_add_item(submenu, "Read", SubmenuIndexRead, nfc_scene_start_submenu_callback, nfc);
+    submenu_add_item(submenu, TR("Read"), SubmenuIndexRead, nfc_scene_start_submenu_callback, nfc);
     submenu_add_item(
         submenu,
-        "Extract MF Keys",
+        TR("Extract MF Keys"),
         SubmenuIndexDetectReader,
         nfc_scene_start_submenu_callback,
         nfc);
-    submenu_add_item(submenu, "Saved", SubmenuIndexSaved, nfc_scene_start_submenu_callback, nfc);
+    submenu_add_item(submenu, TR("Saved"), SubmenuIndexSaved, nfc_scene_start_submenu_callback, nfc);
     submenu_add_item(
-        submenu, "Extra Actions", SubmenuIndexExtraAction, nfc_scene_start_submenu_callback, nfc);
+        submenu, TR("Extra Actions"), SubmenuIndexExtraAction, nfc_scene_start_submenu_callback, nfc);
     submenu_add_item(
-        submenu, "Add Manually", SubmenuIndexAddManually, nfc_scene_start_submenu_callback, nfc);
+        submenu, TR("Add Manually"), SubmenuIndexAddManually, nfc_scene_start_submenu_callback, nfc);
 
     if(furi_hal_rtc_is_flag_set(FuriHalRtcFlagDebug)) {
         submenu_add_item(
-            submenu, "Debug", SubmenuIndexDebug, nfc_scene_start_submenu_callback, nfc);
+            submenu, TR("Debug"), SubmenuIndexDebug, nfc_scene_start_submenu_callback, nfc);
     }
 
     submenu_set_selected_item(

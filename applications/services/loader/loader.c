@@ -4,6 +4,7 @@
 #include <storage/storage.h>
 #include <furi_hal.h>
 #include <assets_icons.h>
+#include <locale/locale.h>
 
 #include <dialogs/dialogs.h>
 #include <toolbox/path.h>
@@ -136,22 +137,22 @@ static void loader_show_gui_error(
             break;
         case LoaderStatusErrorOutOfMemory:
             dialog_message_set_header(
-                message, "Error: Out of Memory", 64, 0, AlignCenter, AlignTop);
+                message, TR("Error: Out of Memory"), 64, 0, AlignCenter, AlignTop);
             dialog_message_set_text(
                 message,
-                "Not enough RAM to run the\napp. Please reboot the device",
+                TR("Not enough RAM to run the\napp. Please reboot the device"),
                 64,
                 13,
                 AlignCenter,
                 AlignTop);
-            dialog_message_set_buttons(message, NULL, NULL, "Reboot");
+            dialog_message_set_buttons(message, NULL, NULL, TR("Reboot"));
             if(dialog_message_show(dialogs, message) == DialogMessageButtonRight) {
                 furi_hal_power_reset();
             }
             break;
         default:
             // Generic error
-            dialog_message_set_header(message, "Error", 64, 0, AlignCenter, AlignTop);
+            dialog_message_set_header(message, TR("Error"), 64, 0, AlignCenter, AlignTop);
 
             furi_string_replace(error_message, "/ext/apps/", "");
             furi_string_replace(error_message, ", ", "\n");

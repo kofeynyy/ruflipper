@@ -3,6 +3,7 @@
 #include "../helpers/archive_apps.h"
 #include "../helpers/archive_browser.h"
 #include "toolbox/path.h"
+#include <locale/locale.h>
 
 #define SCENE_DELETE_CUSTOM_EVENT (0UL)
 #define MAX_TEXT_INPUT_LEN        22
@@ -20,9 +21,9 @@ void archive_scene_delete_on_enter(void* context) {
     ArchiveApp* app = (ArchiveApp*)context;
 
     widget_add_button_element(
-        app->widget, GuiButtonTypeLeft, "Cancel", archive_scene_delete_widget_callback, app);
+        app->widget, GuiButtonTypeLeft, TR("Cancel"), archive_scene_delete_widget_callback, app);
     widget_add_button_element(
-        app->widget, GuiButtonTypeRight, "Delete", archive_scene_delete_widget_callback, app);
+        app->widget, GuiButtonTypeRight, TR("Delete"), archive_scene_delete_widget_callback, app);
 
     FuriString* filename;
     filename = furi_string_alloc();

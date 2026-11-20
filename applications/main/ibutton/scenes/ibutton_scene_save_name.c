@@ -1,4 +1,5 @@
 #include "../ibutton_i.h"
+#include <locale/locale.h>
 
 #include <toolbox/name_generator.h>
 #include <toolbox/path.h>
@@ -21,7 +22,7 @@ void ibutton_scene_save_name_on_enter(void* context) {
             ibutton->key_name, IBUTTON_KEY_NAME_SIZE, IBUTTON_APP_FILENAME_PREFIX);
     }
 
-    text_input_set_header_text(text_input, "Name the key");
+    text_input_set_header_text(text_input, TR("Name the key"));
     text_input_set_result_callback(
         text_input,
         ibutton_scene_save_name_text_input_callback,

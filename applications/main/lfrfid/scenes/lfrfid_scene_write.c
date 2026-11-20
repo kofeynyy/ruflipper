@@ -1,4 +1,5 @@
 #include "../lfrfid_i.h"
+#include <locale/locale.h>
 
 static void lfrfid_write_callback(LFRFIDWorkerWriteResult result, void* context) {
     LfRfid* app = context;
@@ -22,7 +23,7 @@ void lfrfid_scene_write_on_enter(void* context) {
     Popup* popup = app->popup;
 
     popup_set_icon(popup, 0, 8, &I_NFC_manual_60x50);
-    popup_set_header(popup, "Writing", 94, 16, AlignCenter, AlignTop);
+    popup_set_header(popup, TR("Writing"), 94, 16, AlignCenter, AlignTop);
 
     if(!furi_string_empty(app->file_name)) {
         popup_set_text(popup, furi_string_get_cstr(app->file_name), 94, 29, AlignCenter, AlignTop);
@@ -58,20 +59,20 @@ bool lfrfid_scene_write_on_event(void* context, SceneManagerEvent event) {
             consumed = true;
         } else if(event.event == LfRfidEventWriteProtocolCannotBeWritten) {
             popup_set_icon(popup, 83, 22, &I_WarningDolphinFlip_45x42);
-            popup_set_header(popup, "Error", 64, 3, AlignCenter, AlignTop);
-            popup_set_text(popup, "This protocol\ncannot be written", 3, 17, AlignLeft, AlignTop);
+            popup_set_header(popup, TR("Error"), 64, 3, AlignCenter, AlignTop);
+            popup_set_text(popup, TR("This protocol\ncannot be written"), 3, 17, AlignLeft, AlignTop);
             notification_message(app->notifications, &sequence_blink_start_red);
             consumed = true;
         } else if(
             (event.event == LfRfidEventWriteFobCannotBeWritten) ||
             (event.event == LfRfidEventWriteTooLongToWrite)) {
             popup_set_icon(popup, 83, 22, &I_WarningDolphinFlip_45x42);
-            popup_set_header(popup, "Still Trying to Write...", 64, 0, AlignCenter, AlignTop);
+            popup_set_header(popup, TR("Still Trying to Write..."), 64, 0, AlignCenter, AlignTop);
             popup_set_text(
                 popup,
-                "Make sure this\n"
+                TR("Make sure this\n"
                 "card is writable\n"
-                "and not protected",
+                "and not protected"),
                 0,
                 13,
                 AlignLeft,

@@ -1,5 +1,6 @@
 #include "mf_ultralight.h"
 #include "mf_ultralight_render.h"
+#include <locale/locale.h>
 
 #include <nfc/protocols/mf_ultralight/mf_ultralight_poller.h>
 #include <toolbox/pretty_format.h>
@@ -62,14 +63,14 @@ static void nfc_scene_more_info_on_enter_mf_ultralight(NfcApp* instance) {
         widget_add_button_element(
             instance->widget,
             GuiButtonTypeRight,
-            "Raw Data",
+            TR("Raw Data"),
             nfc_protocol_support_common_widget_callback,
             instance);
 
         widget_add_button_element(
             instance->widget,
             GuiButtonTypeLeft,
-            "Info",
+            TR("Info"),
             nfc_protocol_support_common_widget_callback,
             instance);
     } else if(scene_state == NfcSceneMoreInfoStateRawData) {
@@ -80,7 +81,7 @@ static void nfc_scene_more_info_on_enter_mf_ultralight(NfcApp* instance) {
         widget_add_button_element(
             instance->widget,
             GuiButtonTypeLeft,
-            "ASCII",
+            TR("ASCII"),
             nfc_protocol_support_common_widget_callback,
             instance);
     }
@@ -221,14 +222,14 @@ static void nfc_scene_read_and_saved_menu_on_enter_mf_ultralight(NfcApp* instanc
     if(is_locked) {
         submenu_add_item(
             submenu,
-            "Unlock",
+            TR("Unlock"),
             SubmenuIndexUnlock,
             nfc_protocol_support_common_submenu_callback,
             instance);
         if(data->type == MfUltralightTypeMfulC) {
             submenu_add_item(
                 submenu,
-                "Unlock with Dictionary",
+                TR("Unlock with Dictionary"),
                 SubmenuIndexDictAttack,
                 nfc_protocol_support_common_submenu_callback,
                 instance);

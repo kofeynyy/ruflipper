@@ -1,5 +1,6 @@
 #include <gui/scene_manager.h>
 #include <applications.h>
+#include <locale/locale.h>
 
 #include "../desktop_settings_app.h"
 #include "../desktop_settings_custom_event.h"
@@ -19,19 +20,19 @@ void desktop_settings_scene_quick_apps_menu_on_enter(void* context) {
 
     submenu_add_item(
         submenu,
-        "Default Mode",
+        TR("Default Mode"),
         DesktopSettingsCustomEventSetDefault,
         desktop_settings_scene_quick_apps_menu_submenu_callback,
         app);
 
     submenu_add_item(
         submenu,
-        "Dummy Mode",
+        TR("Dummy Mode"),
         DesktopSettingsCustomEventSetDummy,
         desktop_settings_scene_quick_apps_menu_submenu_callback,
         app);
 
-    submenu_set_header(app->submenu, "Set Quick Access Apps");
+    submenu_set_header(app->submenu, TR("Set Quick Access Apps"));
     submenu_set_selected_item(app->submenu, app->quick_apps_menu_idx);
     view_dispatcher_switch_to_view(app->view_dispatcher, DesktopSettingsAppViewMenu);
 }

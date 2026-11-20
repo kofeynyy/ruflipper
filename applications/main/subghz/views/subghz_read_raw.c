@@ -1,4 +1,5 @@
 #include "subghz_read_raw.h"
+#include <locale/locale.h>
 
 #include <furi.h>
 #include <furi_hal.h>
@@ -304,14 +305,14 @@ void subghz_read_raw_draw(Canvas* canvas, SubGhzReadRAWModel* model) {
 
     switch(model->status) {
     case SubGhzReadRAWStatusIDLE:
-        elements_button_left(canvas, "Erase");
-        elements_button_center(canvas, "Send");
-        elements_button_right(canvas, "Save");
+        elements_button_left(canvas, TR("Erase"));
+        elements_button_center(canvas, TR("Send"));
+        elements_button_right(canvas, TR("Save"));
         break;
     case SubGhzReadRAWStatusLoadKeyIDLE:
-        elements_button_left(canvas, "New");
-        elements_button_center(canvas, "Send");
-        elements_button_right(canvas, "More");
+        elements_button_left(canvas, TR("New"));
+        elements_button_center(canvas, TR("Send"));
+        elements_button_right(canvas, TR("More"));
         elements_text_box(
             canvas,
             4,
@@ -329,16 +330,16 @@ void subghz_read_raw_draw(Canvas* canvas, SubGhzReadRAWModel* model) {
     case SubGhzReadRAWStatusLoadKeyTX:
     case SubGhzReadRAWStatusLoadKeyTXRepeat:
         graphics_mode = 0;
-        elements_button_center(canvas, "Hold to repeat");
+        elements_button_center(canvas, TR("Hold to repeat"));
         break;
 
     case SubGhzReadRAWStatusStart:
-        elements_button_left(canvas, "Config");
-        elements_button_center(canvas, "REC");
+        elements_button_left(canvas, TR("Config"));
+        elements_button_center(canvas, TR("REC"));
         break;
 
     default:
-        elements_button_center(canvas, "Stop");
+        elements_button_center(canvas, TR("Stop"));
         break;
     }
 
@@ -349,7 +350,7 @@ void subghz_read_raw_draw(Canvas* canvas, SubGhzReadRAWModel* model) {
         subghz_read_raw_draw_scale(canvas, model);
         subghz_read_raw_draw_threshold_rssi(canvas, model);
         canvas_set_font_direction(canvas, CanvasDirectionBottomToTop);
-        canvas_draw_str(canvas, 128, 40, "RSSI");
+        canvas_draw_str(canvas, 128, 40, TR("RSSI"));
         canvas_set_font_direction(canvas, CanvasDirectionLeftToRight);
     }
 }

@@ -1,5 +1,6 @@
 #include "bt_i.h"
 #include "bt_keys_storage.h"
+#include <locale/locale.h>
 
 #include <core/check.h>
 #include <furi_hal_bt.h>
@@ -48,7 +49,7 @@ static void bt_pin_code_view_port_draw_callback(Canvas* canvas, void* context) {
     canvas_draw_icon(canvas, 0, 0, &I_BLE_Pairing_128x64);
     snprintf(pin_code_info, sizeof(pin_code_info), "Pairing code\n%06lu", bt->pin_code);
     elements_multiline_text_aligned(canvas, 64, 4, AlignCenter, AlignTop, pin_code_info);
-    elements_button_left(canvas, "Quit");
+    elements_button_left(canvas, TR("Quit"));
 }
 
 static void bt_pin_code_view_port_input_callback(InputEvent* event, void* context) {
@@ -114,7 +115,7 @@ static bool bt_pin_code_verify_event_handler(Bt* bt, uint32_t pin) {
     pin_str = furi_string_alloc_printf("Verify code\n%06lu", pin);
     dialog_message_set_text(
         bt->dialog_message, furi_string_get_cstr(pin_str), 64, 4, AlignCenter, AlignTop);
-    dialog_message_set_buttons(bt->dialog_message, "Cancel", "OK", NULL);
+    dialog_message_set_buttons(bt->dialog_message, TR("Cancel"), TR("OK"), NULL);
     DialogMessageButton button = dialog_message_show(bt->dialogs, bt->dialog_message);
     furi_string_free(pin_str);
     return button == DialogMessageButtonCenter;
@@ -377,7 +378,7 @@ static void bt_show_warning(Bt* bt, const char* text) {
         bt->dialog_message = dialog_message_alloc();
     }
     dialog_message_set_text(bt->dialog_message, text, 64, 28, AlignCenter, AlignCenter);
-    dialog_message_set_buttons(bt->dialog_message, "Quit", NULL, NULL);
+    dialog_message_set_buttons(bt->dialog_message, TR("Quit"), NULL, NULL);
     dialog_message_show(bt->dialogs, bt->dialog_message);
 }
 

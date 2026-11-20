@@ -1,4 +1,5 @@
 #include <furi_hal.h>
+#include <locale/locale.h>
 
 #include "../desktop_i.h"
 
@@ -16,7 +17,7 @@ void desktop_scene_fault_on_enter(void* context) {
     popup_set_context(popup, desktop);
     popup_set_header(
         popup,
-        "Flipper crashed\n and was rebooted",
+        TR("Flipper crashed\n and was rebooted"),
         64,
         14 + STATUS_BAR_Y_SHIFT,
         AlignCenter,

@@ -4,6 +4,7 @@
 #include "../helpers/archive_browser.h"
 #include "archive/views/archive_browser_view.h"
 #include "toolbox/path.h"
+#include <locale/locale.h>
 
 #define SCENE_RENAME_CUSTOM_EVENT (0UL)
 #define MAX_TEXT_INPUT_LEN        22
@@ -35,7 +36,7 @@ void archive_scene_rename_on_enter(void* context) {
         memset(archive->file_extension, 0, sizeof(archive->file_extension));
     }
 
-    text_input_set_header_text(text_input, "Rename:");
+    text_input_set_header_text(text_input, TR("Rename:"));
 
     text_input_set_result_callback(
         text_input,

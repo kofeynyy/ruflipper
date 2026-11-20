@@ -1,4 +1,5 @@
 #include "../lfrfid_i.h"
+#include <locale/locale.h>
 
 void lfrfid_scene_raw_success_on_enter(void* context) {
     LfRfid* app = context;
@@ -12,12 +13,12 @@ void lfrfid_scene_raw_success_on_enter(void* context) {
         64,
         AlignLeft,
         AlignTop,
-        "\e#RAW RFID Read Success\e#\n"
+        TR("\e#RAW RFID Read Success\e#\n"
         "Now you can analyze files or\n"
-        "send them to developers",
+        "send them to developers"),
         false);
 
-    widget_add_button_element(widget, GuiButtonTypeCenter, "OK", lfrfid_widget_callback, app);
+    widget_add_button_element(widget, GuiButtonTypeCenter, TR("OK"), lfrfid_widget_callback, app);
 
     view_dispatcher_switch_to_view(app->view_dispatcher, LfRfidViewWidget);
 }

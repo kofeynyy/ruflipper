@@ -1,5 +1,6 @@
 #include "../subghz_i.h"
 #include "../helpers/subghz_custom_event.h"
+#include <locale/locale.h>
 
 void subghz_scene_delete_callback(GuiButtonType result, InputType type, void* context) {
     furi_assert(context);
@@ -54,9 +55,9 @@ void subghz_scene_delete_on_enter(void* context) {
     furi_string_free(text_out);
 
     widget_add_button_element(
-        subghz->widget, GuiButtonTypeRight, "Delete", subghz_scene_delete_callback, subghz);
+        subghz->widget, GuiButtonTypeRight, TR("Delete"), subghz_scene_delete_callback, subghz);
     widget_add_button_element(
-        subghz->widget, GuiButtonTypeLeft, "Cancel", subghz_scene_delete_callback, subghz);
+        subghz->widget, GuiButtonTypeLeft, TR("Cancel"), subghz_scene_delete_callback, subghz);
 
     view_dispatcher_switch_to_view(subghz->view_dispatcher, SubGhzViewIdWidget);
 }

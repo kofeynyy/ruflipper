@@ -3,6 +3,7 @@
 #include <gui/view_dispatcher.h>
 #include <gui/modules/dialog_ex.h>
 #include <dolphin/dolphin.h>
+#include <locale/locale.h>
 
 #include "desktop_settings_scene.h"
 #include "../desktop_settings_app.h"
@@ -26,10 +27,10 @@ void desktop_settings_scene_happy_mode_on_enter(void* context) {
     dolphin_get_settings(dolphin, &settings);
     furi_record_close(RECORD_DOLPHIN);
 
-    dialog_ex_set_header(app->dialog_ex, "Happy Mode", 64, 0, AlignCenter, AlignTop);
+    dialog_ex_set_header(app->dialog_ex, TR("Happy Mode"), 64, 0, AlignCenter, AlignTop);
     dialog_ex_set_text(
         app->dialog_ex,
-        "I will never get angry at you\nfor not spending time with me\nas long as this mode is enabled",
+        TR("I will never get angry at you\nfor not spending time with me\nas long as this mode is enabled"),
         64,
         30,
         AlignCenter,

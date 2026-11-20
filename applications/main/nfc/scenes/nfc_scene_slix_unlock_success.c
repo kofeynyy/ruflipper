@@ -1,4 +1,5 @@
 #include "../nfc_app_i.h"
+#include <locale/locale.h>
 
 static void nfc_scene_slix_unlock_success_widget_callback(
     GuiButtonType result,
@@ -15,7 +16,7 @@ void nfc_scene_slix_unlock_success_on_enter(void* context) {
     NfcApp* instance = context;
 
     Widget* widget = instance->widget;
-    widget_add_string_element(widget, 0, 0, AlignLeft, AlignTop, FontPrimary, "SLIX Unlocked!");
+    widget_add_string_element(widget, 0, 0, AlignLeft, AlignTop, FontPrimary, TR("SLIX Unlocked!"));
 
     FuriString* temp_str = furi_string_alloc_set_str("UID:");
     size_t uid_len = 0;
@@ -31,13 +32,13 @@ void nfc_scene_slix_unlock_success_on_enter(void* context) {
     widget_add_button_element(
         widget,
         GuiButtonTypeLeft,
-        "Retry",
+        TR("Retry"),
         nfc_scene_slix_unlock_success_widget_callback,
         instance);
     widget_add_button_element(
         widget,
         GuiButtonTypeRight,
-        "More",
+        TR("More"),
         nfc_scene_slix_unlock_success_widget_callback,
         instance);
 

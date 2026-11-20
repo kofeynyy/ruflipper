@@ -2,6 +2,7 @@
 #include "../helpers/subghz_txrx_create_protocol_key.h"
 #include <lib/subghz/blocks/math.h>
 #include <lib/subghz/protocols/protocol_items.h>
+#include <locale/locale.h>
 
 #define TAG "SubGhzSetType"
 

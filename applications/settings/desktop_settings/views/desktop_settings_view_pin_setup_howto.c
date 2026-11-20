@@ -6,6 +6,7 @@
 #include <assets_icons.h>
 #include <dolphin/helpers/dolphin_state.h>
 #include <dolphin/dolphin.h>
+#include <locale/locale.h>
 
 #include "desktop_settings_view_pin_setup_howto.h"
 
@@ -20,13 +21,13 @@ static void desktop_settings_view_pin_setup_howto_draw(Canvas* canvas, void* mod
     UNUSED(model);
 
     canvas_draw_icon(canvas, 16, 18, &I_Pin_attention_dpad_29x29);
-    elements_button_right(canvas, "Next");
+    elements_button_right(canvas, TR("Next"));
 
     canvas_set_font(canvas, FontPrimary);
-    elements_multiline_text_aligned(canvas, 64, 0, AlignCenter, AlignTop, "Setting Up PIN");
+    elements_multiline_text_aligned(canvas, 64, 0, AlignCenter, AlignTop, TR("Setting Up PIN"));
 
     canvas_set_font(canvas, FontSecondary);
-    elements_multiline_text(canvas, 58, 24, "Prepare to use\narrows as\nPIN symbols");
+    elements_multiline_text(canvas, 58, 24, TR("Prepare to use\narrows as\nPIN symbols"));
 }
 
 static bool desktop_settings_view_pin_setup_howto_input(InputEvent* event, void* context) {

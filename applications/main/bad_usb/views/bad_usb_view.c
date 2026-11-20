@@ -3,6 +3,7 @@
 #include <toolbox/path.h>
 #include <gui/elements.h>
 #include <assets_icons.h>
+#include <locale/locale.h>
 
 #define MAX_NAME_LEN 64
 
@@ -52,38 +53,38 @@ static void bad_usb_draw_callback(Canvas* canvas, void* _model) {
 
     if((state == BadUsbStateIdle) || (state == BadUsbStateDone) ||
        (state == BadUsbStateNotConnected)) {
-        elements_button_center(canvas, "Run");
-        elements_button_left(canvas, "Config");
+        elements_button_center(canvas, TR("Run"));
+        elements_button_left(canvas, TR("Config"));
         elements_button_right(canvas, model->interface == BadUsbHidInterfaceBle ? "USB" : "BLE");
     } else if((state == BadUsbStateRunning) || (state == BadUsbStateDelay)) {
-        elements_button_center(canvas, "Stop");
+        elements_button_center(canvas, TR("Stop"));
         if(!model->pause_wait) {
-            elements_button_right(canvas, "Pause");
+            elements_button_right(canvas, TR("Pause"));
         }
     } else if(state == BadUsbStatePaused) {
-        elements_button_center(canvas, "End");
-        elements_button_right(canvas, "Resume");
+        elements_button_center(canvas, TR("End"));
+        elements_button_right(canvas, TR("Resume"));
     } else if(state == BadUsbStateWaitForBtn) {
-        elements_button_center(canvas, "Press to continue");
+        elements_button_center(canvas, TR("Press to continue"));
     } else if(state == BadUsbStateWillRun) {
-        elements_button_center(canvas, "Cancel");
+        elements_button_center(canvas, TR("Cancel"));
     }
 
     if(state == BadUsbStateNotConnected) {
         canvas_draw_icon(canvas, 4, 26, &I_Clock_18x18);
         canvas_set_font(canvas, FontPrimary);
-        canvas_draw_str_aligned(canvas, 127, 31, AlignRight, AlignBottom, "Connect");
-        canvas_draw_str_aligned(canvas, 127, 43, AlignRight, AlignBottom, "to device");
+        canvas_draw_str_aligned(canvas, 127, 31, AlignRight, AlignBottom, TR("Connect"));
+        canvas_draw_str_aligned(canvas, 127, 43, AlignRight, AlignBottom, TR("to device"));
     } else if(state == BadUsbStateWillRun) {
         canvas_draw_icon(canvas, 4, 26, &I_Clock_18x18);
         canvas_set_font(canvas, FontPrimary);
-        canvas_draw_str_aligned(canvas, 127, 31, AlignRight, AlignBottom, "Will run");
-        canvas_draw_str_aligned(canvas, 127, 43, AlignRight, AlignBottom, "on connect");
+        canvas_draw_str_aligned(canvas, 127, 31, AlignRight, AlignBottom, TR("Will run"));
+        canvas_draw_str_aligned(canvas, 127, 43, AlignRight, AlignBottom, TR("on connect"));
     } else if(state == BadUsbStateFileError) {
         canvas_draw_icon(canvas, 4, 26, &I_Error_18x18);
         canvas_set_font(canvas, FontPrimary);
-        canvas_draw_str_aligned(canvas, 127, 31, AlignRight, AlignBottom, "File");
-        canvas_draw_str_aligned(canvas, 127, 43, AlignRight, AlignBottom, "ERROR");
+        canvas_draw_str_aligned(canvas, 127, 31, AlignRight, AlignBottom, TR("File"));
+        canvas_draw_str_aligned(canvas, 127, 43, AlignRight, AlignBottom, TR("ERROR"));
     } else if(state == BadUsbStateScriptError) {
         canvas_draw_icon(canvas, 4, 26, &I_Error_18x18);
         furi_string_printf(disp_str, "line %zu", model->state.error_line);
@@ -94,7 +95,7 @@ static void bad_usb_draw_callback(Canvas* canvas, void* _model) {
         canvas_draw_str_aligned(
             canvas, 127, 56, AlignRight, AlignBottom, furi_string_get_cstr(disp_str));
         canvas_set_font(canvas, FontPrimary);
-        canvas_draw_str_aligned(canvas, 127, 33, AlignRight, AlignBottom, "ERROR:");
+        canvas_draw_str_aligned(canvas, 127, 33, AlignRight, AlignBottom, TR("ERROR:"));
     } else if(state == BadUsbStateIdle) {
         canvas_draw_icon(canvas, 4, 26, &I_Smile_18x18);
         furi_string_printf(disp_str, "0/%zu", model->state.line_nb);
@@ -154,7 +155,7 @@ static void bad_usb_draw_callback(Canvas* canvas, void* _model) {
             canvas_draw_icon(canvas, 4, 23, &I_EviWaiting2_18x21);
         }
         if(state != BadUsbStateWaitForBtn) {
-            canvas_draw_str_aligned(canvas, 4, 61, AlignLeft, AlignBottom, "Paused");
+            canvas_draw_str_aligned(canvas, 4, 61, AlignLeft, AlignBottom, TR("Paused"));
         }
         furi_string_printf(disp_str, "%zu/%zu", model->state.line_cur, model->state.line_nb);
         canvas_draw_str_aligned(

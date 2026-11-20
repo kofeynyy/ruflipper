@@ -1,4 +1,5 @@
 #include "../bad_usb_app_i.h"
+#include <locale/locale.h>
 
 enum ConfigIndex {
     ConfigIndexKeyboardLayout,
@@ -75,10 +76,10 @@ static void draw_menu(BadUsbApp* bad_usb) {
 
     variable_item_list_reset(var_item_list);
 
-    variable_item_list_add(var_item_list, "Keyboard Layout (global)", 0, NULL, NULL);
+    variable_item_list_add(var_item_list, TR("Keyboard Layout (global)"), 0, NULL, NULL);
 
     item = variable_item_list_add(
-        var_item_list, "Connection", 2, bad_usb_scene_config_connection_callback, bad_usb);
+        var_item_list, TR("Connection"), 2, bad_usb_scene_config_connection_callback, bad_usb);
     variable_item_set_current_value_index(item, bad_usb->interface == BadUsbHidInterfaceBle);
     variable_item_set_current_value_text(
         item, bad_usb->interface == BadUsbHidInterfaceBle ? "BLE" : "USB");
@@ -88,7 +89,7 @@ static void draw_menu(BadUsbApp* bad_usb) {
 
         item = variable_item_list_add(
             var_item_list,
-            "Persist Pairing",
+            TR("Persist Pairing"),
             2,
             bad_usb_scene_config_ble_persist_pairing_callback,
             bad_usb);
@@ -97,32 +98,32 @@ static void draw_menu(BadUsbApp* bad_usb) {
 
         item = variable_item_list_add(
             var_item_list,
-            "Pairing Mode",
+            TR("Pairing Mode"),
             GapPairingCount,
             bad_usb_scene_config_ble_pairing_mode_callback,
             bad_usb);
         variable_item_set_current_value_index(item, ble_hid_cfg->pairing);
         variable_item_set_current_value_text(item, ble_pairing_mode_names[ble_hid_cfg->pairing]);
 
-        variable_item_list_add(var_item_list, "Set Device Name", 0, NULL, NULL);
+        variable_item_list_add(var_item_list, TR("Set Device Name"), 0, NULL, NULL);
 
-        variable_item_list_add(var_item_list, "Set MAC Address", 0, NULL, NULL);
+        variable_item_list_add(var_item_list, TR("Set MAC Address"), 0, NULL, NULL);
 
-        variable_item_list_add(var_item_list, "Randomize MAC Address", 0, NULL, NULL);
+        variable_item_list_add(var_item_list, TR("Randomize MAC Address"), 0, NULL, NULL);
 
-        variable_item_list_add(var_item_list, "Restore BLE Defaults", 0, NULL, NULL);
+        variable_item_list_add(var_item_list, TR("Restore BLE Defaults"), 0, NULL, NULL);
 
-        variable_item_list_add(var_item_list, "Remove BLE Pairing", 0, NULL, NULL);
+        variable_item_list_add(var_item_list, TR("Remove BLE Pairing"), 0, NULL, NULL);
     } else {
-        variable_item_list_add(var_item_list, "Set Manufacturer Name", 0, NULL, NULL);
+        variable_item_list_add(var_item_list, TR("Set Manufacturer Name"), 0, NULL, NULL);
 
-        variable_item_list_add(var_item_list, "Set Product Name", 0, NULL, NULL);
+        variable_item_list_add(var_item_list, TR("Set Product Name"), 0, NULL, NULL);
 
-        variable_item_list_add(var_item_list, "Set VID and PID", 0, NULL, NULL);
+        variable_item_list_add(var_item_list, TR("Set VID and PID"), 0, NULL, NULL);
 
-        variable_item_list_add(var_item_list, "Randomize VID and PID", 0, NULL, NULL);
+        variable_item_list_add(var_item_list, TR("Randomize VID and PID"), 0, NULL, NULL);
 
-        variable_item_list_add(var_item_list, "Restore USB Defaults", 0, NULL, NULL);
+        variable_item_list_add(var_item_list, TR("Restore USB Defaults"), 0, NULL, NULL);
     }
 }
 

@@ -1,4 +1,5 @@
 #include "nfc_protocol_support_unlock_helper.h"
+#include <locale/locale.h>
 
 static void nfc_scene_read_setup_view(NfcApp* instance) {
     Popup* popup = instance->popup;
@@ -7,11 +8,11 @@ static void nfc_scene_read_setup_view(NfcApp* instance) {
 
     if(state == NfcSceneReadMenuStateCardSearch) {
         popup_set_icon(instance->popup, 0, 8, &I_NFC_manual_60x50);
-        popup_set_header(instance->popup, "Unlocking", 97, 15, AlignCenter, AlignTop);
+        popup_set_header(instance->popup, TR("Unlocking"), 97, 15, AlignCenter, AlignTop);
         popup_set_text(
-            instance->popup, "Hold card next\nto Flipper's back", 94, 27, AlignCenter, AlignTop);
+            instance->popup, TR("Hold card next\nto Flipper's back"), 94, 27, AlignCenter, AlignTop);
     } else {
-        popup_set_header(instance->popup, "Don't move", 85, 27, AlignCenter, AlignTop);
+        popup_set_header(instance->popup, TR("Don't move"), 85, 27, AlignCenter, AlignTop);
         popup_set_icon(instance->popup, 12, 20, &A_Loading_24);
     }
 

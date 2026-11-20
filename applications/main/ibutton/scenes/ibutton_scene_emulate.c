@@ -1,6 +1,7 @@
 #include "../ibutton_i.h"
 #include <core/log.h>
 #include <toolbox/path.h>
+#include <locale/locale.h>
 
 #define EMULATE_TIMEOUT_TICKS 10
 
@@ -34,7 +35,7 @@ void ibutton_scene_emulate_on_enter(void* context) {
         widget, 52, 23, 75, 26, AlignCenter, AlignTop, furi_string_get_cstr(tmp), false);
 
     widget_add_string_multiline_element(
-        widget, 88, 10, AlignCenter, AlignTop, FontPrimary, "Emulating");
+        widget, 88, 10, AlignCenter, AlignTop, FontPrimary, TR("Emulating"));
 
     ibutton_worker_emulate_set_callback(ibutton->worker, ibutton_scene_emulate_callback, ibutton);
     ibutton_worker_emulate_start(ibutton->worker, key);

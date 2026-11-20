@@ -1,4 +1,5 @@
 #include "../lfrfid_i.h"
+#include <locale/locale.h>
 
 void lfrfid_scene_rpc_on_enter(void* context) {
     LfRfid* app = context;
@@ -10,7 +11,7 @@ static void lfrfid_rpc_start_emulation(LfRfid* app) {
 
     lfrfid_text_store_set(app, "emulating\n%s", furi_string_get_cstr(app->file_name));
 
-    popup_set_header(popup, "LF RFID", 89, 42, AlignCenter, AlignBottom);
+    popup_set_header(popup, TR("LF RFID"), 89, 42, AlignCenter, AlignBottom);
     popup_set_text(popup, app->text_store, 89, 44, AlignCenter, AlignTop);
     popup_set_icon(popup, 0, 12, &I_RFIDDolphinSend_97x61);
 

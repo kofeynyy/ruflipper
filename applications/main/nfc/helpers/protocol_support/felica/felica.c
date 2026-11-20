@@ -1,5 +1,6 @@
 #include "felica.h"
 #include "felica_render.h"
+#include <locale/locale.h>
 
 #include <nfc/protocols/felica/felica_poller.h>
 
@@ -135,7 +136,7 @@ static void nfc_scene_read_menu_on_enter_felica(NfcApp* instance) {
     if(data->blocks_read != data->blocks_total) {
         submenu_add_item(
             instance->submenu,
-            "Unlock",
+            TR("Unlock"),
             SubmenuIndexUnlock,
             nfc_protocol_support_common_submenu_callback,
             instance);

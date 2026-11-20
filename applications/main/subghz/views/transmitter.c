@@ -1,4 +1,5 @@
 #include "transmitter.h"
+#include <locale/locale.h>
 
 #include <assets_icons.h>
 #include <input/input.h>
@@ -117,8 +118,8 @@ void subghz_view_transmitter_draw(Canvas* canvas, SubGhzViewTransmitterModel* mo
 
     if(model->show_button) {
         if(model->model_type == SubGhzViewTransmitterModelTypeInfo) {
-            elements_button_center(canvas, "Send");
-            elements_button_right(canvas, "Save");
+            elements_button_center(canvas, TR("Send"));
+            elements_button_right(canvas, TR("Save"));
         } else {
             //default type SubGhzViewTransmitterModelTypeTx
             subghz_view_transmitter_button_right(canvas, "Send");

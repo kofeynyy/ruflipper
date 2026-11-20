@@ -1,4 +1,5 @@
 #include "infrared_progress_view.h"
+#include <locale/locale.h>
 
 #include <assets_icons.h>
 #include <gui/canvas.h>
@@ -73,7 +74,7 @@ static void infrared_progress_view_draw_callback(Canvas* canvas, void* _model) {
     if(model->is_paused) {
         canvas_draw_icon(canvas, buttons_x + 2, buttons_y + 21, &I_ButtonLeftSmall_3x5);
         canvas_draw_icon(canvas, buttons_x + 7, buttons_y + 21, &I_ButtonRightSmall_3x5);
-        canvas_draw_str(canvas, buttons_x + 14, buttons_y + 26, "select");
+        canvas_draw_str(canvas, buttons_x + 14, buttons_y + 26, TR("select"));
     }
 }
 

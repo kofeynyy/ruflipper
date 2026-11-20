@@ -1,6 +1,7 @@
 #include "../storage_settings.h"
 #include <power/power_service/power.h>
 #include <furi_hal.h>
+#include <locale/locale.h>
 
 #define STORAGE_SETTINGS_SCENE_FACTORY_RESET_CONFIRM_COUNT 5
 
@@ -18,13 +19,13 @@ void storage_settings_scene_factory_reset_on_enter(void* context) {
     dialog_ex_set_context(dialog_ex, app);
     dialog_ex_set_result_callback(dialog_ex, storage_settings_scene_factory_reset_dialog_callback);
 
-    dialog_ex_set_left_button_text(dialog_ex, "Cancel");
-    dialog_ex_set_right_button_text(dialog_ex, "Erase");
+    dialog_ex_set_left_button_text(dialog_ex, TR("Cancel"));
+    dialog_ex_set_right_button_text(dialog_ex, TR("Erase"));
 
-    dialog_ex_set_header(dialog_ex, "Confirm Factory Reset?", 64, 0, AlignCenter, AlignTop);
+    dialog_ex_set_header(dialog_ex, TR("Confirm Factory Reset?"), 64, 0, AlignCenter, AlignTop);
     dialog_ex_set_text(
         dialog_ex,
-        "Internal storage will be erased\ndata and settings will be lost!",
+        TR("Internal storage will be erased\ndata and settings will be lost!"),
         64,
         14,
         AlignCenter,

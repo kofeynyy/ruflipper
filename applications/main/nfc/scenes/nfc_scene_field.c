@@ -1,4 +1,5 @@
 #include "../nfc_app_i.h"
+#include <locale/locale.h>
 
 void nfc_scene_field_on_enter(void* context) {
     NfcApp* nfc = context;
@@ -8,7 +9,7 @@ void nfc_scene_field_on_enter(void* context) {
     Popup* popup = nfc->popup;
     popup_set_header(
         popup,
-        "Field is on\nDon't leave device\nin this mode for too long.",
+        TR("Field is on\nDon't leave device\nin this mode for too long."),
         64,
         11,
         AlignCenter,

@@ -3,6 +3,7 @@
 #include <furi.h>
 #include "archive_browser_view.h"
 #include "../helpers/archive_browser.h"
+#include <locale/locale.h>
 
 #define SCROLL_INTERVAL (333)
 #define SCROLL_DELAY    (2)
@@ -250,7 +251,7 @@ static void archive_view_render(Canvas* canvas, void* mdl) {
         draw_list(canvas, model);
     } else {
         canvas_draw_str_aligned(
-            canvas, GUI_DISPLAY_WIDTH / 2, 40, AlignCenter, AlignCenter, "Empty");
+            canvas, GUI_DISPLAY_WIDTH / 2, 40, AlignCenter, AlignCenter, TR("Empty"));
     }
 }
 

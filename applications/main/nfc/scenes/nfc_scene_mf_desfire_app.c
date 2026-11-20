@@ -1,4 +1,5 @@
 #include "../nfc_app_i.h"
+#include <locale/locale.h>
 
 #include "../helpers/protocol_support/mf_desfire/mf_desfire_render.h"
 
@@ -19,7 +20,7 @@ void nfc_scene_mf_desfire_app_on_enter(void* context) {
     text_box_set_font(nfc->text_box, TextBoxFontHex);
     submenu_add_item(
         nfc->submenu,
-        "App info",
+        TR("App info"),
         SubmenuIndexAppInfo,
         nfc_scene_mf_desfire_app_submenu_callback,
         nfc);

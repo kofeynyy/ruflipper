@@ -1,5 +1,6 @@
 #include <gui/scene_manager.h>
 #include <applications.h>
+#include <locale/locale.h>
 
 #include "../desktop_settings_app.h"
 #include "desktop_settings_scene.h"
@@ -34,63 +35,63 @@ void desktop_settings_scene_quick_apps_direction_menu_on_enter(void* context) {
     if(favorite_id == SCENE_STATE_SET_FAVORITE_APP) {
         submenu_add_item(
             submenu,
-            "Left - Press",
+            TR("Left - Press"),
             QuickAppsSubmenuIndexFavoriteLeftClick,
             desktop_settings_scene_quick_apps_direction_menu_submenu_callback,
             app);
 
         submenu_add_item(
             submenu,
-            "Right - Press",
+            TR("Right - Press"),
             QuickAppsSubmenuIndexFavoriteRightClick,
             desktop_settings_scene_quick_apps_direction_menu_submenu_callback,
             app);
 
         submenu_add_item(
             submenu,
-            "Left - Hold",
+            TR("Left - Hold"),
             QuickAppsSubmenuIndexFavoriteLeftHold,
             desktop_settings_scene_quick_apps_direction_menu_submenu_callback,
             app);
 
         submenu_add_item(
             submenu,
-            "Right - Hold",
+            TR("Right - Hold"),
             QuickAppsSubmenuIndexFavoriteRightHold,
             desktop_settings_scene_quick_apps_direction_menu_submenu_callback,
             app);
 
-        submenu_set_header(app->submenu, "Default Mode");
+        submenu_set_header(app->submenu, TR("Default Mode"));
     } else {
         submenu_add_item(
             submenu,
-            "Left - Press",
+            TR("Left - Press"),
             QuickAppsSubmenuIndexDummyLeftClick,
             desktop_settings_scene_quick_apps_direction_menu_submenu_callback,
             app);
 
         submenu_add_item(
             submenu,
-            "Right - Press",
+            TR("Right - Press"),
             QuickAppsSubmenuIndexDummyRightClick,
             desktop_settings_scene_quick_apps_direction_menu_submenu_callback,
             app);
 
         submenu_add_item(
             submenu,
-            "Down - Press",
+            TR("Down - Press"),
             QuickAppsSubmenuIndexDummyDownClick,
             desktop_settings_scene_quick_apps_direction_menu_submenu_callback,
             app);
 
         submenu_add_item(
             submenu,
-            "Middle - Press",
+            TR("Middle - Press"),
             QuickAppsSubmenuIndexDummyMiddleClick,
             desktop_settings_scene_quick_apps_direction_menu_submenu_callback,
             app);
 
-        submenu_set_header(app->submenu, "Dummy Mode");
+        submenu_set_header(app->submenu, TR("Dummy Mode"));
     }
 
     submenu_set_selected_item(app->submenu, app->quick_apps_direction_menu_idx);

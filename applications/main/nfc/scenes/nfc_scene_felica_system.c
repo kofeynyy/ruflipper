@@ -1,4 +1,5 @@
 #include "../nfc_app_i.h"
+#include <locale/locale.h>
 
 #include "../helpers/protocol_support/nfc_protocol_support_gui_common.h"
 #include "../helpers/protocol_support/felica/felica_render.h"
@@ -24,7 +25,7 @@ void nfc_scene_felica_system_on_enter(void* context) {
     const FelicaData* data = nfc_device_get_data(nfc->nfc_device, NfcProtocolFelica);
 
     submenu_add_item(
-        submenu, "Directory", SubmenuIndexDirectory, nfc_scene_felica_system_submenu_callback, nfc);
+        submenu, TR("Directory"), SubmenuIndexDirectory, nfc_scene_felica_system_submenu_callback, nfc);
 
     FuriString* label = furi_string_alloc();
 

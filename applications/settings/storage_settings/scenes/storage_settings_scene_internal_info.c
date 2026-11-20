@@ -1,5 +1,6 @@
 #include "../storage_settings.h"
 #include <furi_hal_version.h>
+#include <locale/locale.h>
 
 static void
     storage_settings_scene_internal_info_dialog_callback(DialogExResult result, void* context) {
@@ -21,7 +22,7 @@ void storage_settings_scene_internal_info_on_enter(void* context) {
 
     if(error != FSE_OK) {
         dialog_ex_set_header(
-            dialog_ex, "Internal Storage Error", 64, 10, AlignCenter, AlignCenter);
+            dialog_ex, TR("Internal Storage Error"), 64, 10, AlignCenter, AlignCenter);
         dialog_ex_set_text(
             dialog_ex, storage_error_get_desc(error), 64, 32, AlignCenter, AlignCenter);
     } else {

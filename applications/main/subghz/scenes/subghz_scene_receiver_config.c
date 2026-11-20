@@ -1,5 +1,6 @@
 #include "../subghz_i.h"
 #include <lib/toolbox/value_index.h>
+#include <locale/locale.h>
 
 enum SubGhzSettingIndex {
     SubGhzSettingIndexFrequency,
@@ -249,7 +250,7 @@ void subghz_scene_receiver_config_on_enter(void* context) {
 
     item = variable_item_list_add(
         subghz->variable_item_list,
-        "Frequency:",
+        TR("Frequency:"),
         subghz_setting_get_frequency_count(setting),
         subghz_scene_receiver_config_set_frequency,
         subghz);
@@ -271,7 +272,7 @@ void subghz_scene_receiver_config_on_enter(void* context) {
        SubGhzCustomEventManagerSet) {
         item = variable_item_list_add(
             subghz->variable_item_list,
-            "Hopping:",
+            TR("Hopping:"),
             HOPPING_COUNT,
             subghz_scene_receiver_config_set_hopping_running,
             subghz);
@@ -283,7 +284,7 @@ void subghz_scene_receiver_config_on_enter(void* context) {
 
     item = variable_item_list_add(
         subghz->variable_item_list,
-        "Modulation:",
+        TR("Modulation:"),
         subghz_setting_get_preset_count(setting),
         subghz_scene_receiver_config_set_preset,
         subghz);
@@ -297,7 +298,7 @@ void subghz_scene_receiver_config_on_enter(void* context) {
        SubGhzCustomEventManagerSet) {
         item = variable_item_list_add(
             subghz->variable_item_list,
-            "Bin_Raw:",
+            TR("Bin_Raw:"),
             BIN_RAW_COUNT,
             subghz_scene_receiver_config_set_bin_raw,
             subghz);
@@ -308,7 +309,7 @@ void subghz_scene_receiver_config_on_enter(void* context) {
 
     item = variable_item_list_add(
         subghz->variable_item_list,
-        "Sound:",
+        TR("Sound:"),
         SPEAKER_COUNT,
         subghz_scene_receiver_config_set_speaker,
         subghz);
@@ -319,7 +320,7 @@ void subghz_scene_receiver_config_on_enter(void* context) {
 
     if(scene_manager_get_scene_state(subghz->scene_manager, SubGhzSceneReadRAW) !=
        SubGhzCustomEventManagerSet) {
-        variable_item_list_add(subghz->variable_item_list, "Lock Keyboard", 1, NULL, NULL);
+        variable_item_list_add(subghz->variable_item_list, TR("Lock Keyboard"), 1, NULL, NULL);
         variable_item_list_set_enter_callback(
             subghz->variable_item_list,
             subghz_scene_receiver_config_var_list_enter_callback,
@@ -329,7 +330,7 @@ void subghz_scene_receiver_config_on_enter(void* context) {
        SubGhzCustomEventManagerSet) {
         item = variable_item_list_add(
             subghz->variable_item_list,
-            "RSSI Threshold:",
+            TR("RSSI Threshold:"),
             RAW_THRESHOLD_RSSI_COUNT,
             subghz_scene_receiver_config_set_raw_threshold_rssi,
             subghz);

@@ -1,4 +1,5 @@
 #include "../subghz_i.h" // IWYU pragma: keep
+#include <locale/locale.h>
 
 enum SubmenuIndex {
     SubmenuIndexEmulate,
@@ -15,21 +16,21 @@ void subghz_scene_saved_menu_on_enter(void* context) {
     SubGhz* subghz = context;
     submenu_add_item(
         subghz->submenu,
-        "Emulate",
+        TR("Emulate"),
         SubmenuIndexEmulate,
         subghz_scene_saved_menu_submenu_callback,
         subghz);
 
     submenu_add_item(
         subghz->submenu,
-        "Rename",
+        TR("Rename"),
         SubmenuIndexEdit,
         subghz_scene_saved_menu_submenu_callback,
         subghz);
 
     submenu_add_item(
         subghz->submenu,
-        "Delete",
+        TR("Delete"),
         SubmenuIndexDelete,
         subghz_scene_saved_menu_submenu_callback,
         subghz);

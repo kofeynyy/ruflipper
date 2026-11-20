@@ -1,4 +1,5 @@
 #include "dict_attack.h"
+#include <locale/locale.h>
 
 #include <gui/elements.h>
 
@@ -175,10 +176,10 @@ static void dict_attack_draw_callback(Canvas* canvas, void* model) {
     DictAttackViewModel* m = model;
     if(!m->card_detected) {
         canvas_set_font(canvas, FontPrimary);
-        canvas_draw_str_aligned(canvas, 64, 4, AlignCenter, AlignTop, "Lost the tag!");
+        canvas_draw_str_aligned(canvas, 64, 4, AlignCenter, AlignTop, TR("Lost the tag!"));
         canvas_set_font(canvas, FontSecondary);
         elements_multiline_text_aligned(
-            canvas, 64, 23, AlignCenter, AlignTop, "Make sure the tag is\npositioned correctly.");
+            canvas, 64, 23, AlignCenter, AlignTop, TR("Make sure the tag is\npositioned correctly."));
     } else {
         if(m->attack_type == DictAttackTypeMfClassic) {
             dict_attack_draw_mf_classic(canvas, m);
@@ -186,7 +187,7 @@ static void dict_attack_draw_callback(Canvas* canvas, void* model) {
             dict_attack_draw_mf_ultralight_c(canvas, m);
         }
     }
-    elements_button_center(canvas, "Skip");
+    elements_button_center(canvas, TR("Skip"));
 }
 
 static bool dict_attack_input_callback(InputEvent* event, void* context) {

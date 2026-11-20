@@ -1,4 +1,5 @@
 #include "../nfc_app_i.h"
+#include <locale/locale.h>
 
 void nfc_scene_select_protocol_submenu_callback(void* context, uint32_t index) {
     NfcApp* instance = context;
@@ -17,7 +18,7 @@ void nfc_scene_select_protocol_on_enter(void* context) {
         nfc_detected_protocols_fill_all_protocols(instance->detected_protocols);
     } else {
         prefix = "Read as";
-        submenu_set_header(submenu, "Multi-protocol card");
+        submenu_set_header(submenu, TR("Multi-protocol card"));
     }
 
     for(uint32_t i = 0; i < nfc_detected_protocols_get_num(instance->detected_protocols); i++) {

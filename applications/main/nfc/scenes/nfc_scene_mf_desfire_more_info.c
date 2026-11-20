@@ -1,4 +1,5 @@
 #include "../nfc_app_i.h"
+#include <locale/locale.h>
 
 #include "../helpers/protocol_support/nfc_protocol_support_gui_common.h"
 #include "../helpers/protocol_support/mf_desfire/mf_desfire_render.h"
@@ -25,7 +26,7 @@ void nfc_scene_mf_desfire_more_info_on_enter(void* context) {
 
     submenu_add_item(
         submenu,
-        "Card info",
+        TR("Card info"),
         SubmenuIndexCardInfo,
         nfc_protocol_support_common_submenu_callback,
         nfc);

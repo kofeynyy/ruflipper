@@ -1,5 +1,6 @@
 #include "../bt_settings_app.h"
 #include <furi_hal_bt.h>
+#include <locale/locale.h>
 
 enum BtSetting {
     BtSettingOff,
@@ -42,7 +43,7 @@ void bt_settings_scene_start_on_enter(void* context) {
     if(furi_hal_bt_is_gatt_gap_supported()) {
         item = variable_item_list_add(
             var_item_list,
-            "Bluetooth",
+            TR("Bluetooth"),
             BtSettingNum,
             bt_settings_scene_start_var_list_change_callback,
             app);
@@ -53,11 +54,11 @@ void bt_settings_scene_start_on_enter(void* context) {
             variable_item_set_current_value_index(item, BtSettingOff);
             variable_item_set_current_value_text(item, bt_settings_text[BtSettingOff]);
         }
-        variable_item_list_add(var_item_list, "Unpair All Devices", 1, NULL, NULL);
+        variable_item_list_add(var_item_list, TR("Unpair All Devices"), 1, NULL, NULL);
         variable_item_list_set_enter_callback(
             var_item_list, bt_settings_scene_start_var_list_enter_callback, app);
     } else {
-        item = variable_item_list_add(var_item_list, "Bluetooth", 1, NULL, NULL);
+        item = variable_item_list_add(var_item_list, TR("Bluetooth"), 1, NULL, NULL);
         variable_item_set_current_value_text(item, "Broken");
     }
 

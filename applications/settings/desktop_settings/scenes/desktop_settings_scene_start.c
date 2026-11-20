@@ -1,5 +1,6 @@
 #include <applications.h>
 #include <lib/toolbox/value_index.h>
+#include <locale/locale.h>
 
 #include "../desktop_settings_app.h"
 #include "desktop_settings_scene.h"
@@ -60,11 +61,11 @@ void desktop_settings_scene_start_on_enter(void* context) {
     VariableItem* item;
     uint8_t value_index;
 
-    variable_item_list_add(variable_item_list, "PIN Setup", 1, NULL, NULL);
+    variable_item_list_add(variable_item_list, TR("PIN Setup"), 1, NULL, NULL);
 
     item = variable_item_list_add(
         variable_item_list,
-        "Auto Lock Time",
+        TR("Auto Lock Time"),
         AUTO_LOCK_DELAY_COUNT,
         desktop_settings_scene_start_auto_lock_delay_changed,
         app);
@@ -76,7 +77,7 @@ void desktop_settings_scene_start_on_enter(void* context) {
 
     item = variable_item_list_add(
         variable_item_list,
-        "Show Clock",
+        TR("Show Clock"),
         CLOCK_ENABLE_COUNT,
         desktop_settings_scene_start_clock_enable_changed,
         app);
@@ -86,9 +87,9 @@ void desktop_settings_scene_start_on_enter(void* context) {
     variable_item_set_current_value_index(item, value_index);
     variable_item_set_current_value_text(item, clock_enable_text[value_index]);
 
-    variable_item_list_add(variable_item_list, "Set Quick Access Apps", 1, NULL, NULL);
+    variable_item_list_add(variable_item_list, TR("Set Quick Access Apps"), 1, NULL, NULL);
 
-    variable_item_list_add(variable_item_list, "Happy Mode", 1, NULL, NULL);
+    variable_item_list_add(variable_item_list, TR("Happy Mode"), 1, NULL, NULL);
 
     variable_item_list_set_enter_callback(
         variable_item_list, desktop_settings_scene_start_var_list_enter_callback, app);

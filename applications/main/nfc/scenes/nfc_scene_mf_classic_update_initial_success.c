@@ -1,4 +1,5 @@
 #include "../nfc_app_i.h"
+#include <locale/locale.h>
 
 void nfc_scene_mf_classic_update_initial_success_popup_callback(void* context) {
     NfcApp* instance = context;
@@ -13,7 +14,7 @@ void nfc_scene_mf_classic_update_initial_success_on_enter(void* context) {
 
     Popup* popup = instance->popup;
     popup_set_icon(popup, 48, 6, &I_DolphinDone_80x58);
-    popup_set_header(popup, "Updated", 11, 20, AlignLeft, AlignBottom);
+    popup_set_header(popup, TR("Updated"), 11, 20, AlignLeft, AlignBottom);
     popup_set_timeout(popup, 1500);
     popup_set_context(popup, instance);
     popup_set_callback(popup, nfc_scene_mf_classic_update_initial_success_popup_callback);

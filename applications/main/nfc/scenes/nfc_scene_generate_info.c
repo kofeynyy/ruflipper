@@ -1,4 +1,5 @@
 #include "../nfc_app_i.h"
+#include <locale/locale.h>
 
 void nfc_scene_generate_info_widget_callback(GuiButtonType result, InputType type, void* context) {
     NfcApp* instance = context;
@@ -22,14 +23,14 @@ void nfc_scene_generate_info_on_enter(void* context) {
     // Setup dialog view
     Widget* widget = instance->widget;
     widget_add_button_element(
-        widget, GuiButtonTypeRight, "More", nfc_scene_generate_info_widget_callback, instance);
+        widget, GuiButtonTypeRight, TR("More"), nfc_scene_generate_info_widget_callback, instance);
 
     // Create info text
     NfcDataGeneratorType type =
         scene_manager_get_scene_state(instance->scene_manager, NfcSceneGenerateInfo);
     const char* name = nfc_data_generator_get_name(type);
     widget_add_string_element(widget, 0, 0, AlignLeft, AlignTop, FontPrimary, name);
-    widget_add_string_element(widget, 0, 13, AlignLeft, AlignTop, FontSecondary, "NFC-A");
+    widget_add_string_element(widget, 0, 13, AlignLeft, AlignTop, FontSecondary, TR("NFC-A"));
 
     FuriString* temp_str = furi_string_alloc_printf("UID:");
     // Append UID

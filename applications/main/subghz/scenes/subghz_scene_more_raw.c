@@ -1,4 +1,5 @@
 #include "../subghz_i.h"
+#include <locale/locale.h>
 
 enum SubmenuIndex {
     SubmenuIndexEdit,
@@ -15,14 +16,14 @@ void subghz_scene_more_raw_on_enter(void* context) {
 
     submenu_add_item(
         subghz->submenu,
-        "Rename",
+        TR("Rename"),
         SubmenuIndexEdit,
         subghz_scene_more_raw_submenu_callback,
         subghz);
 
     submenu_add_item(
         subghz->submenu,
-        "Delete",
+        TR("Delete"),
         SubmenuIndexDelete,
         subghz_scene_more_raw_submenu_callback,
         subghz);

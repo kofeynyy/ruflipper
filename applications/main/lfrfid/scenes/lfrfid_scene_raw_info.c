@@ -1,4 +1,5 @@
 #include "../lfrfid_i.h"
+#include <locale/locale.h>
 
 void lfrfid_scene_raw_info_on_enter(void* context) {
     LfRfid* app = context;
@@ -7,7 +8,7 @@ void lfrfid_scene_raw_info_on_enter(void* context) {
     if(storage_sd_status(app->storage) != FSE_OK) {
         widget_add_icon_element(widget, 83, 22, &I_WarningDolphinFlip_45x42);
         widget_add_string_element(
-            widget, 64, 0, AlignCenter, AlignTop, FontPrimary, "No SD Card!");
+            widget, 64, 0, AlignCenter, AlignTop, FontPrimary, TR("No SD Card!"));
         widget_add_string_multiline_element(
             widget,
             0,
@@ -15,8 +16,8 @@ void lfrfid_scene_raw_info_on_enter(void* context) {
             AlignLeft,
             AlignTop,
             FontSecondary,
-            "Insert an SD card\n"
-            "to use this function");
+            TR("Insert an SD card\n"
+            "to use this function"));
 
     } else {
         widget_add_text_box_element(
@@ -27,13 +28,13 @@ void lfrfid_scene_raw_info_on_enter(void* context) {
             64,
             AlignLeft,
             AlignTop,
-            "\e#RAW RFID Data Reader\e#\n"
+            TR("\e#RAW RFID Data Reader\e#\n"
             "1. Hold card next to Flipper\n"
             "2. Press OK\n"
-            "3. Wait until data is read",
+            "3. Wait until data is read"),
             false);
 
-        widget_add_button_element(widget, GuiButtonTypeCenter, "OK", lfrfid_widget_callback, app);
+        widget_add_button_element(widget, GuiButtonTypeCenter, TR("OK"), lfrfid_widget_callback, app);
     }
 
     view_dispatcher_switch_to_view(app->view_dispatcher, LfRfidViewWidget);

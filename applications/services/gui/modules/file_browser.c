@@ -1,5 +1,6 @@
 #include "file_browser.h"
 #include "file_browser_worker.h"
+#include <locale/locale.h>
 
 #include <gui/elements.h>
 #include <assets_icons.h>
@@ -581,7 +582,7 @@ static void browser_draw_list(Canvas* canvas, FileBrowserModel* model) {
             canvas_height(canvas) / 2,
             AlignCenter,
             AlignCenter,
-            "<Empty>");
+            TR("<Empty>"));
     }
 
     furi_string_free(filename);

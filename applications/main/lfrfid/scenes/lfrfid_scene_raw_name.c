@@ -1,4 +1,5 @@
 #include "../lfrfid_i.h"
+#include <locale/locale.h>
 
 void lfrfid_scene_raw_name_on_enter(void* context) {
     LfRfid* app = context;
@@ -13,7 +14,7 @@ void lfrfid_scene_raw_name_on_enter(void* context) {
         lfrfid_text_store_set(app, "%s", key_name);
     }
 
-    text_input_set_header_text(text_input, "Name the raw file");
+    text_input_set_header_text(text_input, TR("Name the raw file"));
 
     text_input_set_result_callback(
         text_input,

@@ -1,5 +1,6 @@
 #include "../nfc_app_i.h"
 #include "loader/loader.h"
+#include <locale/locale.h>
 
 typedef enum {
     NfcSceneMfClassicMfKeyCompleteStateAppMissing,
@@ -20,7 +21,7 @@ void nfc_scene_mf_classic_mfkey_complete_on_enter(void* context) {
     NfcApp* instance = context;
 
     widget_add_string_element(
-        instance->widget, 64, 0, AlignCenter, AlignTop, FontPrimary, "Completed!");
+        instance->widget, 64, 0, AlignCenter, AlignTop, FontPrimary, TR("Completed!"));
 
     NfcSceneMfClassicMfKeyCompleteState scene_state =
         storage_common_exists(instance->storage, NFC_MFKEY32_APP_PATH) ?
@@ -37,12 +38,12 @@ void nfc_scene_mf_classic_mfkey_complete_on_enter(void* context) {
             AlignCenter,
             AlignTop,
             FontSecondary,
-            "Now use Mfkey32 to extract \nkeys: r.flipper.net/nfc-tools");
+            TR("Now use Mfkey32 to extract \nkeys: r.flipper.net/nfc-tools"));
         widget_add_icon_element(instance->widget, 50, 39, &I_MFKey_qr_25x25);
         widget_add_button_element(
             instance->widget,
             GuiButtonTypeRight,
-            "Finish",
+            TR("Finish"),
             nfc_scene_mf_classic_mfkey_complete_callback,
             instance);
     } else {
@@ -53,12 +54,12 @@ void nfc_scene_mf_classic_mfkey_complete_on_enter(void* context) {
             AlignLeft,
             AlignTop,
             FontSecondary,
-            "Now run Mfkey32\n to extract \nkeys");
+            TR("Now run Mfkey32\n to extract \nkeys"));
         widget_add_icon_element(instance->widget, 5, 18, &I_WarningDolphin_45x42);
         widget_add_button_element(
             instance->widget,
             GuiButtonTypeRight,
-            "Run",
+            TR("Run"),
             nfc_scene_mf_classic_mfkey_complete_callback,
             instance);
     }

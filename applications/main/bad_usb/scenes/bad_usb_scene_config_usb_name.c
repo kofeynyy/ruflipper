@@ -1,4 +1,5 @@
 #include "../bad_usb_app_i.h"
+#include <locale/locale.h>
 
 enum TextInputResult {
     TextInputResultOk,
@@ -19,13 +20,13 @@ void bad_usb_scene_config_usb_name_on_enter(void* context) {
             bad_usb->usb_name_buf,
             bad_usb->script_hid_cfg.usb.manuf,
             sizeof(bad_usb->usb_name_buf));
-        text_input_set_header_text(text_input, "Set USB manufacturer name");
+        text_input_set_header_text(text_input, TR("Set USB manufacturer name"));
     } else {
         strlcpy(
             bad_usb->usb_name_buf,
             bad_usb->script_hid_cfg.usb.product,
             sizeof(bad_usb->usb_name_buf));
-        text_input_set_header_text(text_input, "Set USB product name");
+        text_input_set_header_text(text_input, TR("Set USB product name"));
     }
 
     text_input_set_result_callback(

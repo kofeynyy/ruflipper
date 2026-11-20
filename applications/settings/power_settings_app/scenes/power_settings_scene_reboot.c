@@ -1,4 +1,5 @@
 #include "../power_settings_app.h"
+#include <locale/locale.h>
 
 enum PowerSettingsRebootSubmenuIndex {
     PowerSettingsRebootSubmenuIndexDfu,
@@ -15,16 +16,16 @@ void power_settings_scene_reboot_on_enter(void* context) {
     PowerSettingsApp* app = context;
     Submenu* submenu = app->submenu;
 
-    submenu_set_header(submenu, "Reboot Type");
+    submenu_set_header(submenu, TR("Reboot Type"));
     submenu_add_item(
         submenu,
-        "Firmware Upgrade",
+        TR("Firmware Upgrade"),
         PowerSettingsRebootSubmenuIndexDfu,
         power_settings_scene_reboot_submenu_callback,
         app);
     submenu_add_item(
         submenu,
-        "Reboot Flipper",
+        TR("Reboot Flipper"),
         PowerSettingsRebootSubmenuIndexOs,
         power_settings_scene_reboot_submenu_callback,
         app);

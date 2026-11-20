@@ -1,4 +1,5 @@
 #include "../nfc_app_i.h"
+#include <locale/locale.h>
 
 void nfc_scene_mf_classic_keys_delete_widget_callback(
     GuiButtonType result,
@@ -18,17 +19,17 @@ void nfc_scene_mf_classic_keys_delete_on_enter(void* context) {
     FuriString* key_str = furi_string_alloc();
 
     widget_add_string_element(
-        instance->widget, 64, 0, AlignCenter, AlignTop, FontPrimary, "Delete this key?");
+        instance->widget, 64, 0, AlignCenter, AlignTop, FontPrimary, TR("Delete this key?"));
     widget_add_button_element(
         instance->widget,
         GuiButtonTypeLeft,
-        "Cancel",
+        TR("Cancel"),
         nfc_scene_mf_classic_keys_delete_widget_callback,
         instance);
     widget_add_button_element(
         instance->widget,
         GuiButtonTypeRight,
-        "Delete",
+        TR("Delete"),
         nfc_scene_mf_classic_keys_delete_widget_callback,
         instance);
 

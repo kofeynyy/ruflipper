@@ -1,4 +1,5 @@
 #include <furi.h>
+#include <locale/locale.h>
 
 #include <gui/canvas.h>
 #include <gui/view.h>
@@ -57,7 +58,7 @@ static void desktop_view_pin_timeout_draw(Canvas* canvas, void* _model) {
     DesktopViewPinTimeoutModel* model = _model;
 
     canvas_set_font(canvas, FontPrimary);
-    canvas_draw_str(canvas, 36, 31, "Wrong PIN!");
+    canvas_draw_str(canvas, 36, 31, TR("Wrong PIN!"));
 
     canvas_set_font(canvas, FontSecondary);
     char str[30] = {0};

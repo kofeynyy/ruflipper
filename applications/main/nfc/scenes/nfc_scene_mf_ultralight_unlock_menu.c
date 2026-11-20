@@ -1,4 +1,5 @@
 #include "../nfc_app_i.h"
+#include <locale/locale.h>
 
 enum SubmenuIndex {
     SubmenuIndexMfUlUnlockMenuReader,
@@ -26,7 +27,7 @@ void nfc_scene_mf_ultralight_unlock_menu_on_enter(void* context) {
         if(mfu_data->type != MfUltralightTypeMfulC) {
             submenu_add_item(
                 submenu,
-                "Unlock With Reader",
+                TR("Unlock With Reader"),
                 SubmenuIndexMfUlUnlockMenuReader,
                 nfc_scene_mf_ultralight_unlock_menu_submenu_callback,
                 nfc);
@@ -34,19 +35,19 @@ void nfc_scene_mf_ultralight_unlock_menu_on_enter(void* context) {
     }
     submenu_add_item(
         submenu,
-        "Auth As Ameebo",
+        TR("Auth As Ameebo"),
         SubmenuIndexMfUlUnlockMenuAmeebo,
         nfc_scene_mf_ultralight_unlock_menu_submenu_callback,
         nfc);
     submenu_add_item(
         submenu,
-        "Auth As Xiaomi Air Purifier",
+        TR("Auth As Xiaomi Air Purifier"),
         SubmenuIndexMfUlUnlockMenuXiaomi,
         nfc_scene_mf_ultralight_unlock_menu_submenu_callback,
         nfc);
     submenu_add_item(
         submenu,
-        "Enter Password Manually",
+        TR("Enter Password Manually"),
         SubmenuIndexMfUlUnlockMenuManual,
         nfc_scene_mf_ultralight_unlock_menu_submenu_callback,
         nfc);

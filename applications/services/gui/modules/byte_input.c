@@ -1,4 +1,5 @@
 #include "byte_input.h"
+#include <locale/locale.h>
 
 #include <gui/elements.h>
 #include <furi.h>
@@ -636,13 +637,13 @@ static void byte_input_view_draw_callback(Canvas* canvas, void* _model) {
     if(model->selected_row == -2) {
         canvas_set_font(canvas, FontSecondary);
         canvas_draw_icon(canvas, 3, 1, &I_Pin_back_arrow_10x8);
-        canvas_draw_str_aligned(canvas, 16, 9, AlignLeft, AlignBottom, "back to keyboard");
-        elements_button_center(canvas, "Save");
+        canvas_draw_str_aligned(canvas, 16, 9, AlignLeft, AlignBottom, TR("back to keyboard"));
+        elements_button_center(canvas, TR("Save"));
     } else {
         // Draw the header
         canvas_set_font(canvas, FontSecondary);
         if(model->selected_row == -1) {
-            canvas_draw_str(canvas, 10, 9, "Move up for alternate input");
+            canvas_draw_str(canvas, 10, 9, TR("Move up for alternate input"));
             canvas_draw_icon(canvas, 3, 4, &I_SmallArrowUp_3x5);
         } else {
             canvas_draw_str(canvas, 2, 9, model->header);

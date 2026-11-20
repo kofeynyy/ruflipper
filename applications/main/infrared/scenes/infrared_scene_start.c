@@ -1,4 +1,5 @@
 #include "../infrared_app_i.h"
+#include <locale/locale.h>
 
 enum SubmenuIndex {
     SubmenuIndexUniversalRemotes,
@@ -20,32 +21,32 @@ void infrared_scene_start_on_enter(void* context) {
 
     submenu_add_item(
         submenu,
-        "Universal Remotes",
+        TR("Universal Remotes"),
         SubmenuIndexUniversalRemotes,
         infrared_scene_start_submenu_callback,
         infrared);
     submenu_add_item(
         submenu,
-        "Learn New Remote",
+        TR("Learn New Remote"),
         SubmenuIndexLearnNewRemote,
         infrared_scene_start_submenu_callback,
         infrared);
     submenu_add_item(
         submenu,
-        "Saved Remotes",
+        TR("Saved Remotes"),
         SubmenuIndexSavedRemotes,
         infrared_scene_start_submenu_callback,
         infrared);
     submenu_add_item(
         submenu,
-        "GPIO Settings",
+        TR("GPIO Settings"),
         SubmenuIndexGpioSettings,
         infrared_scene_start_submenu_callback,
         infrared);
 
     if(infrared->app_state.is_debug_enabled) {
         submenu_add_item(
-            submenu, "Debug", SubmenuIndexDebug, infrared_scene_start_submenu_callback, infrared);
+            submenu, TR("Debug"), SubmenuIndexDebug, infrared_scene_start_submenu_callback, infrared);
     }
 
     const uint32_t submenu_index =

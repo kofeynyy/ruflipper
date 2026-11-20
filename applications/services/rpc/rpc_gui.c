@@ -1,6 +1,7 @@
 #include "rpc_i.h"
 #include <gui/gui_i.h>
 #include <assets_icons.h>
+#include <locale/locale.h>
 
 #include <flipper.pb.h>
 #include <gui.pb.h>
@@ -247,8 +248,8 @@ static void rpc_system_gui_virtual_display_render_callback(Canvas* canvas, void*
 
     if(!rpc_gui->virtual_display_not_empty) {
         canvas_set_font(canvas, FontPrimary);
-        canvas_draw_str_aligned(canvas, 64, 20, AlignCenter, AlignCenter, "Virtual Display");
-        canvas_draw_str_aligned(canvas, 64, 36, AlignCenter, AlignCenter, "Waiting for frames...");
+        canvas_draw_str_aligned(canvas, 64, 20, AlignCenter, AlignCenter, TR("Virtual Display"));
+        canvas_draw_str_aligned(canvas, 64, 36, AlignCenter, AlignCenter, TR("Waiting for frames..."));
         return;
     }
 

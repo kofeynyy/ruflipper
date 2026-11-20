@@ -1,5 +1,6 @@
 #include "nfc_app_i.h"
 #include "helpers/protocol_support/nfc_protocol_support.h"
+#include <locale/locale.h>
 
 #include <dolphin/dolphin.h>
 
@@ -453,9 +454,9 @@ static bool nfc_is_hal_ready(void) {
         // No connection to the chip, show an error screen
         DialogsApp* dialogs = furi_record_open(RECORD_DIALOGS);
         DialogMessage* message = dialog_message_alloc();
-        dialog_message_set_header(message, "Error: NFC Chip Failed", 64, 0, AlignCenter, AlignTop);
+        dialog_message_set_header(message, TR("Error: NFC Chip Failed"), 64, 0, AlignCenter, AlignTop);
         dialog_message_set_text(
-            message, "Send error photo via\nsupport.flipper.net", 0, 63, AlignLeft, AlignBottom);
+            message, TR("Send error photo via\nsupport.flipper.net"), 0, 63, AlignLeft, AlignBottom);
         dialog_message_set_icon(message, &I_err_09, 128 - 25, 64 - 25);
         dialog_message_show(dialogs, message);
         dialog_message_free(message);

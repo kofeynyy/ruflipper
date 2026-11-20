@@ -2,6 +2,7 @@
 #include <furi.h>
 #include <gui/elements.h>
 #include <assets_icons.h>
+#include <locale/locale.h>
 
 struct PowerUnplugUsb {
     View* view;
@@ -18,7 +19,7 @@ static void power_unplug_usb_draw_callback(Canvas* canvas, void* _model) {
     canvas_set_color(canvas, ColorWhite);
     canvas_set_font(canvas, FontPrimary);
     elements_multiline_text_aligned(
-        canvas, 64, 32, AlignCenter, AlignCenter, "It's now safe to unplug\nthe USB cable");
+        canvas, 64, 32, AlignCenter, AlignCenter, TR("It's now safe to unplug\nthe USB cable"));
 }
 
 PowerUnplugUsb* power_unplug_usb_alloc(void) {

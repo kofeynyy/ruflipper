@@ -1,4 +1,5 @@
 #include "../bad_usb_app_i.h"
+#include <locale/locale.h>
 
 enum TextInputResult {
     TextInputResultOk,
@@ -16,7 +17,7 @@ void bad_usb_scene_config_ble_name_on_enter(void* context) {
 
     strlcpy(
         bad_usb->ble_name_buf, bad_usb->script_hid_cfg.ble.name, sizeof(bad_usb->ble_name_buf));
-    text_input_set_header_text(text_input, "Set BLE device name");
+    text_input_set_header_text(text_input, TR("Set BLE device name"));
 
     text_input_set_result_callback(
         text_input,

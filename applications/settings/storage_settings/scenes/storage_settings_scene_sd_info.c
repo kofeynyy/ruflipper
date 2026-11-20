@@ -1,4 +1,5 @@
 #include "../storage_settings.h"
+#include <locale/locale.h>
 
 static void storage_settings_scene_sd_info_dialog_callback(DialogExResult result, void* context) {
     StorageSettings* app = context;
@@ -20,10 +21,10 @@ void storage_settings_scene_sd_info_on_enter(void* context) {
 
     if(sd_status != FSE_OK) {
         dialog_ex_set_icon(dialog_ex, 83, 22, &I_WarningDolphinFlip_45x42);
-        dialog_ex_set_header(dialog_ex, "SD Card Not Mounted", 64, 3, AlignCenter, AlignTop);
+        dialog_ex_set_header(dialog_ex, TR("SD Card Not Mounted"), 64, 3, AlignCenter, AlignTop);
         dialog_ex_set_text(
-            dialog_ex, "Try to reinsert\nor format SD\ncard.", 3, 19, AlignLeft, AlignTop);
-        dialog_ex_set_center_button_text(dialog_ex, "Ok");
+            dialog_ex, TR("Try to reinsert\nor format SD\ncard."), 3, 19, AlignLeft, AlignTop);
+        dialog_ex_set_center_button_text(dialog_ex, TR("Ok"));
     } else {
         furi_string_printf(
             app->text_string,

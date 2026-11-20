@@ -1,4 +1,5 @@
 #include "../lfrfid_i.h"
+#include <locale/locale.h>
 
 #define LFRFID_SCENE_DELETE_MAX_HEX_WIDTH (7UL)
 
@@ -40,8 +41,8 @@ void lfrfid_scene_delete_confirm_on_enter(void* context) {
 
     widget_add_text_box_element(
         widget, 0, 0, 128, 64, AlignCenter, AlignTop, furi_string_get_cstr(display_text), true);
-    widget_add_button_element(widget, GuiButtonTypeLeft, "Cancel", lfrfid_widget_callback, app);
-    widget_add_button_element(widget, GuiButtonTypeRight, "Delete", lfrfid_widget_callback, app);
+    widget_add_button_element(widget, GuiButtonTypeLeft, TR("Cancel"), lfrfid_widget_callback, app);
+    widget_add_button_element(widget, GuiButtonTypeRight, TR("Delete"), lfrfid_widget_callback, app);
 
     view_dispatcher_switch_to_view(app->view_dispatcher, LfRfidViewWidget);
     furi_string_free(display_text);

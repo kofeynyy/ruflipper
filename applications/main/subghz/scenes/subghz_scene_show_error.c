@@ -1,5 +1,6 @@
 #include "../subghz_i.h" // IWYU pragma: keep
 #include "../helpers/subghz_custom_event.h"
+#include <locale/locale.h>
 
 static const NotificationSequence subghs_sequence_sd_error = {
     &message_red_255,
@@ -37,13 +38,13 @@ void subghz_scene_show_error_on_enter(void* context) {
     if(scene_manager_get_scene_state(subghz->scene_manager, SubGhzSceneShowError) ==
        SubGhzCustomEventManagerSet) {
         widget_add_button_element(
-            subghz->widget, GuiButtonTypeRight, "OK", subghz_scene_show_error_callback, subghz);
+            subghz->widget, GuiButtonTypeRight, TR("OK"), subghz_scene_show_error_callback, subghz);
     } else {
         notification_message(subghz->notifications, &subghs_sequence_sd_error);
     }
 
     widget_add_button_element(
-        subghz->widget, GuiButtonTypeLeft, "Back", subghz_scene_show_error_callback, subghz);
+        subghz->widget, GuiButtonTypeLeft, TR("Back"), subghz_scene_show_error_callback, subghz);
 
     view_dispatcher_switch_to_view(subghz->view_dispatcher, SubGhzViewIdWidget);
 }

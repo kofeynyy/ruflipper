@@ -1,12 +1,13 @@
 #include "../gpio_app_i.h"
 #include "../gpio_custom_event.h"
+#include <locale/locale.h>
 
 void gpio_scene_usb_uart_close_rpc_on_enter(void* context) {
     GpioApp* app = context;
 
     widget_add_icon_element(app->widget, 78, 0, &I_ActiveConnection_50x64);
     widget_add_string_multiline_element(
-        app->widget, 3, 2, AlignLeft, AlignTop, FontPrimary, "Connection\nIs Active!");
+        app->widget, 3, 2, AlignLeft, AlignTop, FontPrimary, TR("Connection\nIs Active!"));
     widget_add_string_multiline_element(
         app->widget,
         3,
@@ -14,7 +15,7 @@ void gpio_scene_usb_uart_close_rpc_on_enter(void* context) {
         AlignLeft,
         AlignTop,
         FontSecondary,
-        "Disconnect from\nPC or phone to\nuse this function.");
+        TR("Disconnect from\nPC or phone to\nuse this function."));
 
     view_dispatcher_switch_to_view(app->view_dispatcher, GpioAppViewUsbUartCloseRpc);
 }

@@ -1,4 +1,5 @@
 #include "../bad_usb_app_i.h"
+#include <locale/locale.h>
 
 enum ByteInputResult {
     ByteInputResultOk,
@@ -16,7 +17,7 @@ void bad_usb_scene_config_usb_vidpid_on_enter(void* context) {
 
     bad_usb->usb_vidpid_buf[0] = __builtin_bswap16(bad_usb->script_hid_cfg.usb.vid);
     bad_usb->usb_vidpid_buf[1] = __builtin_bswap16(bad_usb->script_hid_cfg.usb.pid);
-    byte_input_set_header_text(byte_input, "Set USB VID:PID");
+    byte_input_set_header_text(byte_input, TR("Set USB VID:PID"));
 
     byte_input_set_result_callback(
         byte_input,

@@ -1,4 +1,5 @@
 #include "../ibutton_i.h"
+#include <locale/locale.h>
 
 static void ibutton_scene_add_type_byte_input_callback(void* context) {
     iButton* ibutton = context;
@@ -12,7 +13,7 @@ static void ibutton_scene_add_type_byte_changed_callback(void* context) {
 
 void ibutton_scene_add_value_on_enter(void* context) {
     iButton* ibutton = context;
-    byte_input_set_header_text(ibutton->byte_input, "Enter the key");
+    byte_input_set_header_text(ibutton->byte_input, TR("Enter the key"));
 
     iButtonEditableData editable_data;
     ibutton_protocols_get_editable_data(ibutton->protocols, ibutton->key, &editable_data);

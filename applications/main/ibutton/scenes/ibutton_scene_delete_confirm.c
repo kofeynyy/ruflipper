@@ -1,5 +1,6 @@
 #include "../ibutton_i.h"
 #include <toolbox/path.h>
+#include <locale/locale.h>
 
 void ibutton_scene_delete_confirm_on_enter(void* context) {
     iButton* ibutton = context;
@@ -9,9 +10,9 @@ void ibutton_scene_delete_confirm_on_enter(void* context) {
     FuriString* tmp = furi_string_alloc();
     FuriString* uid = furi_string_alloc();
 
-    widget_add_button_element(widget, GuiButtonTypeLeft, "Back", ibutton_widget_callback, context);
+    widget_add_button_element(widget, GuiButtonTypeLeft, TR("Back"), ibutton_widget_callback, context);
     widget_add_button_element(
-        widget, GuiButtonTypeRight, "Delete", ibutton_widget_callback, context);
+        widget, GuiButtonTypeRight, TR("Delete"), ibutton_widget_callback, context);
 
     furi_string_printf(tmp, "\e#Delete %s?\e#\n", ibutton->key_name);
 

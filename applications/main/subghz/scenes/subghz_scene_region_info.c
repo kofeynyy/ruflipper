@@ -1,4 +1,5 @@
 #include "../subghz_i.h" // IWYU pragma: keep
+#include <locale/locale.h>
 
 #include <furi_hal_region.h>
 
@@ -21,7 +22,7 @@ void subghz_scene_region_info_on_enter(void* context) {
     }
 
     widget_add_string_multiline_element(
-        subghz->widget, 0, 0, AlignLeft, AlignTop, FontPrimary, "Region Information");
+        subghz->widget, 0, 0, AlignLeft, AlignTop, FontPrimary, TR("Region Information"));
 
     widget_add_string_multiline_element(
         subghz->widget, 0, 13, AlignLeft, AlignTop, FontSecondary, furi_string_get_cstr(buffer));

@@ -1,5 +1,6 @@
 #include <gui/scene_manager.h>
 #include <furi_hal.h>
+#include <locale/locale.h>
 
 #include "desktop_scene.h"
 #include "../desktop_i.h"
@@ -26,7 +27,7 @@ void desktop_scene_hw_mismatch_on_enter(void* context) {
         version_get_target(NULL));
     popup_set_context(popup, desktop);
     popup_set_header(
-        popup, "!!!! HW Mismatch !!!!", 64, 12 + STATUS_BAR_Y_SHIFT, AlignCenter, AlignBottom);
+        popup, TR("!!!! HW Mismatch !!!!"), 64, 12 + STATUS_BAR_Y_SHIFT, AlignCenter, AlignBottom);
     popup_set_text(popup, text_buffer, 64, 33 + STATUS_BAR_Y_SHIFT, AlignCenter, AlignCenter);
     popup_set_callback(popup, desktop_scene_hw_mismatch_callback);
     view_dispatcher_switch_to_view(desktop->view_dispatcher, DesktopViewIdPopup);

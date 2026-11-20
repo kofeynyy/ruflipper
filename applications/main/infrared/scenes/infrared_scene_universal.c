@@ -1,4 +1,5 @@
 #include "../infrared_app_i.h"
+#include <locale/locale.h>
 
 typedef enum {
     SubmenuIndexUniversalTV,
@@ -18,25 +19,25 @@ void infrared_scene_universal_on_enter(void* context) {
 
     submenu_add_item(
         submenu,
-        "TVs",
+        TR("TVs"),
         SubmenuIndexUniversalTV,
         infrared_scene_universal_submenu_callback,
         context);
     submenu_add_item(
         submenu,
-        "Audio Players",
+        TR("Audio Players"),
         SubmenuIndexUniversalAudio,
         infrared_scene_universal_submenu_callback,
         context);
     submenu_add_item(
         submenu,
-        "Projectors",
+        TR("Projectors"),
         SubmenuIndexUniversalProjector,
         infrared_scene_universal_submenu_callback,
         context);
     submenu_add_item(
         submenu,
-        "Air Conditioners",
+        TR("Air Conditioners"),
         SubmenuIndexUniversalAC,
         infrared_scene_universal_submenu_callback,
         context);

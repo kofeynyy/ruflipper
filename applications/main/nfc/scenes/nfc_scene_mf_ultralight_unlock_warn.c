@@ -1,5 +1,6 @@
 #include "../nfc_app_i.h"
 #include <dolphin/dolphin.h>
+#include <locale/locale.h>
 
 void nfc_scene_mf_ultralight_unlock_warn_dialog_callback(DialogExResult result, void* context) {
     NfcApp* nfc = context;
@@ -30,18 +31,18 @@ void nfc_scene_mf_ultralight_unlock_warn_on_enter(void* context) {
                                                                      "Risky Action!";
         dialog_ex_set_header(dialog_ex, message, 64, 0, AlignCenter, AlignTop);
         dialog_ex_set_text(dialog_ex, nfc->text_store, 64, 10, AlignCenter, AlignTop);
-        dialog_ex_set_left_button_text(dialog_ex, "Cancel");
-        dialog_ex_set_right_button_text(dialog_ex, "Continue");
+        dialog_ex_set_left_button_text(dialog_ex, TR("Cancel"));
+        dialog_ex_set_right_button_text(dialog_ex, TR("Continue"));
 
         if(type == MfUltralightAuthTypeReader) {
             notification_message(nfc->notifications, &sequence_set_green_255);
         }
     } else {
-        dialog_ex_set_header(dialog_ex, "Risky action!", 64, 4, AlignCenter, AlignTop);
+        dialog_ex_set_header(dialog_ex, TR("Risky action!"), 64, 4, AlignCenter, AlignTop);
         dialog_ex_set_text(
-            dialog_ex, "Wrong password\ncan block your\ncard.", 4, 18, AlignLeft, AlignTop);
+            dialog_ex, TR("Wrong password\ncan block your\ncard."), 4, 18, AlignLeft, AlignTop);
         dialog_ex_set_icon(dialog_ex, 83, 22, &I_WarningDolphinFlip_45x42);
-        dialog_ex_set_center_button_text(dialog_ex, "OK");
+        dialog_ex_set_center_button_text(dialog_ex, TR("OK"));
     }
 
     view_dispatcher_switch_to_view(nfc->view_dispatcher, NfcViewDialogEx);

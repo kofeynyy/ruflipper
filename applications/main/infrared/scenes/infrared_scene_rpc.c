@@ -1,5 +1,6 @@
 #include "../infrared_app_i.h"
 #include <gui/canvas.h>
+#include <locale/locale.h>
 
 #define TAG "InfraredApp"
 
@@ -26,8 +27,8 @@ void infrared_scene_rpc_on_enter(void* context) {
 static void infrared_scene_rpc_show(InfraredApp* infrared) {
     Popup* popup = infrared->popup;
 
-    popup_set_header(popup, "Infrared", 89, 42, AlignCenter, AlignBottom);
-    popup_set_text(popup, "RPC mode", 89, 44, AlignCenter, AlignTop);
+    popup_set_header(popup, TR("Infrared"), 89, 42, AlignCenter, AlignBottom);
+    popup_set_text(popup, TR("RPC mode"), 89, 44, AlignCenter, AlignTop);
     popup_set_text(popup, infrared->text_store[0], 89, 44, AlignCenter, AlignTop);
 
     popup_set_icon(popup, 0, 12, &I_RFIDDolphinSend_97x61);

@@ -1,4 +1,5 @@
 #include "../nfc_app_i.h"
+#include <locale/locale.h>
 
 void nfc_scene_mf_ultralight_c_keys_warn_duplicate_popup_callback(void* context) {
     NfcApp* instance = context;
@@ -12,11 +13,11 @@ void nfc_scene_mf_ultralight_c_keys_warn_duplicate_on_enter(void* context) {
     // Setup view
     Popup* popup = instance->popup;
     popup_set_icon(popup, 83, 22, &I_WarningDolphinFlip_45x42);
-    popup_set_header(popup, "Key Already Exists!", 64, 3, AlignCenter, AlignTop);
+    popup_set_header(popup, TR("Key Already Exists!"), 64, 3, AlignCenter, AlignTop);
     popup_set_text(
         popup,
-        "Please enter a\n"
-        "different key.",
+        TR("Please enter a\n"
+        "different key."),
         4,
         24,
         AlignLeft,

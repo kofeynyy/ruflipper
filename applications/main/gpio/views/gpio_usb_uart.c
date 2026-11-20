@@ -3,6 +3,7 @@
 #include <furi_hal.h>
 #include <gui/elements.h>
 #include <assets_icons.h>
+#include <locale/locale.h>
 
 struct GpioUsbUart {
     View* view;
@@ -24,14 +25,14 @@ typedef struct {
 static void gpio_usb_uart_draw_callback(Canvas* canvas, void* _model) {
     GpioUsbUartModel* model = _model;
     char temp_str[18];
-    elements_button_left(canvas, "Config");
+    elements_button_left(canvas, TR("Config"));
     canvas_draw_line(canvas, 2, 10, 125, 10);
     canvas_draw_line(canvas, 44, 52, 123, 52);
 
     canvas_set_font(canvas, FontPrimary);
-    canvas_draw_str(canvas, 2, 9, "USB Serial");
-    canvas_draw_str(canvas, 3, 25, "TX:");
-    canvas_draw_str(canvas, 3, 42, "RX:");
+    canvas_draw_str(canvas, 2, 9, TR("USB Serial"));
+    canvas_draw_str(canvas, 3, 25, TR("TX:"));
+    canvas_draw_str(canvas, 3, 42, TR("RX:"));
 
     canvas_set_font(canvas, FontSecondary);
     snprintf(temp_str, 18, "COM PORT:%u", model->vcp_port);
@@ -55,7 +56,7 @@ static void gpio_usb_uart_draw_callback(Canvas* canvas, void* _model) {
         canvas_draw_str_aligned(canvas, 116, 24, AlignRight, AlignBottom, temp_str);
     } else {
         canvas_set_font(canvas, FontSecondary);
-        canvas_draw_str_aligned(canvas, 127, 24, AlignRight, AlignBottom, "KiB.");
+        canvas_draw_str_aligned(canvas, 127, 24, AlignRight, AlignBottom, TR("KiB."));
         canvas_set_font(canvas, FontKeyboard);
         snprintf(temp_str, 18, "%lu", model->tx_cnt / 1024);
         canvas_draw_str_aligned(canvas, 111, 24, AlignRight, AlignBottom, temp_str);
@@ -69,7 +70,7 @@ static void gpio_usb_uart_draw_callback(Canvas* canvas, void* _model) {
         canvas_draw_str_aligned(canvas, 116, 41, AlignRight, AlignBottom, temp_str);
     } else {
         canvas_set_font(canvas, FontSecondary);
-        canvas_draw_str_aligned(canvas, 127, 41, AlignRight, AlignBottom, "KiB.");
+        canvas_draw_str_aligned(canvas, 127, 41, AlignRight, AlignBottom, TR("KiB."));
         canvas_set_font(canvas, FontKeyboard);
         snprintf(temp_str, 18, "%lu", model->rx_cnt / 1024);
         canvas_draw_str_aligned(canvas, 111, 41, AlignRight, AlignBottom, temp_str);

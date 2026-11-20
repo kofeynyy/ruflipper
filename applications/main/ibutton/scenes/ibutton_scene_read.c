@@ -1,5 +1,6 @@
 #include "../ibutton_i.h"
 #include <dolphin/dolphin.h>
+#include <locale/locale.h>
 
 static void ibutton_scene_read_callback(void* context) {
     iButton* ibutton = context;
@@ -12,8 +13,8 @@ void ibutton_scene_read_on_enter(void* context) {
     iButtonKey* key = ibutton->key;
     iButtonWorker* worker = ibutton->worker;
 
-    popup_set_header(popup, "Reading", 95, 26, AlignCenter, AlignBottom);
-    popup_set_text(popup, "Connect key\nwith pogo pins", 95, 30, AlignCenter, AlignTop);
+    popup_set_header(popup, TR("Reading"), 95, 26, AlignCenter, AlignBottom);
+    popup_set_text(popup, TR("Connect key\nwith pogo pins"), 95, 30, AlignCenter, AlignTop);
     popup_set_icon(popup, 0, 10, &I_DolphinWait_59x54);
 
     view_dispatcher_switch_to_view(ibutton->view_dispatcher, iButtonViewPopup);

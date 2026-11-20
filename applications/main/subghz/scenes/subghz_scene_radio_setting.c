@@ -2,6 +2,7 @@
 #include <lib/toolbox/value_index.h>
 #include <applications/drivers/subghz/cc1101_ext/cc1101_ext_interconnect.h>
 #include <lib/subghz/devices/cc1101_int/cc1101_int_interconnect.h>
+#include <locale/locale.h>
 
 enum SubGhzRadioSettingIndex {
     SubGhzRadioSettingIndexDevice,
@@ -58,7 +59,7 @@ void subghz_scene_radio_settings_on_enter(void* context) {
 
     item = variable_item_list_add(
         subghz->variable_item_list,
-        "Module",
+        TR("Module"),
         value_count_device,
         subghz_scene_radio_settings_set_device,
         subghz);

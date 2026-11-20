@@ -1,4 +1,5 @@
 #include "subghz_frequency_analyzer.h"
+#include <locale/locale.h>
 
 #include <furi.h>
 #include <furi_hal.h>
@@ -97,7 +98,7 @@ static void subghz_frequency_analyzer_log_frequency_draw(
     if(items_count == 0) {
         canvas_draw_rframe(canvas, offset_x + 27, offset_y - 3, 73, 16, 5);
         canvas_draw_str_aligned(
-            canvas, offset_x + 64, offset_y + 8, AlignCenter, AlignBottom, "No records");
+            canvas, offset_x + 64, offset_y + 8, AlignCenter, AlignBottom, TR("No records"));
         return;
     } else if(items_count > 3) {
         elements_scrollbar_pos(
@@ -148,7 +149,7 @@ static void subghz_frequency_analyzer_history_frequency_draw(
         } else {
             canvas_draw_str(canvas, x, y + i * 10, "---.---");
         }
-        canvas_draw_str(canvas, x + 44, y + i * 10, "MHz");
+        canvas_draw_str(canvas, x + 44, y + i * 10, TR("MHz"));
     }
     canvas_set_font(canvas, FontSecondary);
 }
@@ -174,9 +175,9 @@ void subghz_frequency_analyzer_draw(Canvas* canvas, SubGhzFrequencyAnalyzerModel
         }
         subghz_frequency_analyzer_log_frequency_draw(canvas, model);
     } else {
-        canvas_draw_str(canvas, 0, 8, "Frequency Analyzer");
+        canvas_draw_str(canvas, 0, 8, TR("Frequency Analyzer"));
         canvas_draw_icon(canvas, 109, 0, &I_Internal_ant_1_9x11);
-        canvas_draw_str(canvas, 0, 64, "RSSI");
+        canvas_draw_str(canvas, 0, 64, TR("RSSI"));
         subghz_frequency_analyzer_draw_rssi(canvas, model->rssi, 20, 64);
 
         subghz_frequency_analyzer_history_frequency_draw(canvas, model);

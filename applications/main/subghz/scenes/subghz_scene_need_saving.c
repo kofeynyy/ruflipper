@@ -1,5 +1,6 @@
 #include "../subghz_i.h"
 #include "../helpers/subghz_custom_event.h"
+#include <locale/locale.h>
 
 void subghz_scene_need_saving_callback(GuiButtonType result, InputType type, void* context) {
     furi_assert(context);
@@ -23,13 +24,13 @@ void subghz_scene_need_saving_on_enter(void* context) {
         54,
         AlignCenter,
         AlignTop,
-        "\e#Exit to Sub-GHz Menu?\e#\nAll unsaved data will be lost",
+        TR("\e#Exit to Sub-GHz Menu?\e#\nAll unsaved data will be lost"),
         false);
 
     widget_add_button_element(
-        subghz->widget, GuiButtonTypeRight, "Stay", subghz_scene_need_saving_callback, subghz);
+        subghz->widget, GuiButtonTypeRight, TR("Stay"), subghz_scene_need_saving_callback, subghz);
     widget_add_button_element(
-        subghz->widget, GuiButtonTypeLeft, "Exit", subghz_scene_need_saving_callback, subghz);
+        subghz->widget, GuiButtonTypeLeft, TR("Exit"), subghz_scene_need_saving_callback, subghz);
 
     view_dispatcher_switch_to_view(subghz->view_dispatcher, SubGhzViewIdWidget);
 }

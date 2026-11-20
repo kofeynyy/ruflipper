@@ -1,6 +1,7 @@
 #include "hid_tiktok.h"
 #include "../hid.h"
 #include <gui/elements.h>
+#include <locale/locale.h>
 
 #include "hid_icons.h"
 
@@ -35,7 +36,7 @@ static void hid_tiktok_draw_callback(Canvas* canvas, void* context) {
 #endif
 
     canvas_set_font(canvas, FontPrimary);
-    elements_multiline_text_aligned(canvas, 17, 3, AlignLeft, AlignTop, "TikTok");
+    elements_multiline_text_aligned(canvas, 17, 3, AlignLeft, AlignTop, TR("TikTok"));
     canvas_set_font(canvas, FontSecondary);
 
     // Keypad circles
@@ -92,7 +93,7 @@ static void hid_tiktok_draw_callback(Canvas* canvas, void* context) {
     // Exit
     canvas_draw_icon(canvas, 0, 54, &I_Pin_back_arrow_10x8);
     canvas_set_font(canvas, FontSecondary);
-    elements_multiline_text_aligned(canvas, 13, 62, AlignLeft, AlignBottom, "Hold to exit");
+    elements_multiline_text_aligned(canvas, 13, 62, AlignLeft, AlignBottom, TR("Hold to exit"));
 }
 
 static void hid_tiktok_reset_cursor(HidTikTok* hid_tiktok) {

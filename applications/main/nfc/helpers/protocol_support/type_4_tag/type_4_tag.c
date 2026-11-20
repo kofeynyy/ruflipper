@@ -1,5 +1,6 @@
 #include "type_4_tag.h"
 #include "type_4_tag_render.h"
+#include <locale/locale.h>
 
 #include <nfc/protocols/type_4_tag/type_4_tag_poller.h>
 #include <nfc/protocols/type_4_tag/type_4_tag_listener.h>
@@ -56,14 +57,14 @@ static void nfc_scene_more_info_on_enter_type_4_tag(NfcApp* instance) {
         widget_add_button_element(
             instance->widget,
             GuiButtonTypeRight,
-            "Raw Data",
+            TR("Raw Data"),
             nfc_protocol_support_common_widget_callback,
             instance);
 
         widget_add_button_element(
             instance->widget,
             GuiButtonTypeLeft,
-            "Info",
+            TR("Info"),
             nfc_protocol_support_common_widget_callback,
             instance);
     } else if(scene_state == NfcSceneMoreInfoStateRawData) {
@@ -74,7 +75,7 @@ static void nfc_scene_more_info_on_enter_type_4_tag(NfcApp* instance) {
         widget_add_button_element(
             instance->widget,
             GuiButtonTypeLeft,
-            "ASCII",
+            TR("ASCII"),
             nfc_protocol_support_common_widget_callback,
             instance);
     }

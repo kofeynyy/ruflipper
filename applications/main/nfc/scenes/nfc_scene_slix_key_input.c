@@ -1,4 +1,5 @@
 #include "../nfc_app_i.h"
+#include <locale/locale.h>
 
 #include <bit_lib/bit_lib.h>
 
@@ -16,7 +17,7 @@ void nfc_scene_slix_key_input_on_enter(void* context) {
 
     // Setup view
     ByteInput* byte_input = instance->byte_input;
-    byte_input_set_header_text(byte_input, "Enter the password in hex");
+    byte_input_set_header_text(byte_input, TR("Enter the password in hex"));
     byte_input_set_result_callback(
         byte_input,
         nfc_scene_slix_key_input_byte_input_callback,

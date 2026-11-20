@@ -1,5 +1,6 @@
 #include <gui/scene_manager.h>
 #include <furi_hal.h>
+#include <locale/locale.h>
 
 #include "desktop_scene.h"
 #include "../desktop_i.h"
@@ -16,11 +17,11 @@ void desktop_scene_secure_enclave_on_enter(void* context) {
     Popup* popup = desktop->popup;
     popup_set_context(popup, desktop);
     popup_set_header(
-        popup, "No Factory Keys Found", 64, 12 + STATUS_BAR_Y_SHIFT, AlignCenter, AlignBottom);
+        popup, TR("No Factory Keys Found"), 64, 12 + STATUS_BAR_Y_SHIFT, AlignCenter, AlignBottom);
     popup_set_text(
         popup,
-        "Secure Enclave is damaged.\n"
-        "Some apps will not work.",
+        TR("Secure Enclave is damaged.\n"
+        "Some apps will not work."),
         64,
         33 + STATUS_BAR_Y_SHIFT,
         AlignCenter,

@@ -1,4 +1,5 @@
 #include "../ibutton_i.h"
+#include <locale/locale.h>
 
 static inline iButtonCustomEvent
     ibutton_scene_write_to_custom_event(iButtonWorkerWriteResult result) {
@@ -27,7 +28,7 @@ static void ibutton_scene_write_show_error(iButton* ibutton, const char* text) {
     Widget* widget = ibutton->widget;
 
     widget_reset(widget);
-    widget_add_string_element(widget, 64, 4, AlignCenter, AlignTop, FontPrimary, "Cannot Write");
+    widget_add_string_element(widget, 64, 4, AlignCenter, AlignTop, FontPrimary, TR("Cannot Write"));
     widget_add_text_box_element(widget, 0, 20, 128, 44, AlignCenter, AlignTop, text, false);
 }
 

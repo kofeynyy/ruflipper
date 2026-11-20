@@ -1,5 +1,6 @@
 #include "../subghz_i.h"
 #include "../helpers/subghz_custom_event.h"
+#include <locale/locale.h>
 
 void subghz_scene_save_success_popup_callback(void* context) {
     SubGhz* subghz = context;
@@ -12,7 +13,7 @@ void subghz_scene_save_success_on_enter(void* context) {
     // Setup view
     Popup* popup = subghz->popup;
     popup_set_icon(popup, 36, 5, &I_DolphinSaved_92x58);
-    popup_set_header(popup, "Saved", 15, 19, AlignLeft, AlignBottom);
+    popup_set_header(popup, TRC("done", "Saved"), 15, 19, AlignLeft, AlignBottom);
     popup_set_timeout(popup, 1500);
     popup_set_context(popup, subghz);
     popup_set_callback(popup, subghz_scene_save_success_popup_callback);

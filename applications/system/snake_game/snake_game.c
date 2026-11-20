@@ -5,6 +5,7 @@
 #include <dolphin/dolphin.h>
 #include <notification/notification.h>
 #include <notification/notification_messages.h>
+#include <locale/locale.h>
 
 typedef struct {
     //    +-----x
@@ -125,7 +126,7 @@ static void snake_game_render_callback(Canvas* const canvas, void* ctx) {
         canvas_draw_frame(canvas, 34, 20, 62, 24);
 
         canvas_set_font(canvas, FontPrimary);
-        canvas_draw_str(canvas, 37, 31, "Game Over");
+        canvas_draw_str(canvas, 37, 31, TR("Game Over"));
 
         canvas_set_font(canvas, FontSecondary);
         char buffer[12];
