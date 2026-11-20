@@ -26,6 +26,31 @@ typedef struct {
     const char* text;
 } ElementTextBoxLine;
 
+static inline bool elements_utf8_is_continuation(char byte) {
+    return ((uint8_t)byte & 0xC0) == 0x80;
+}
+
+/** Move `pos` back to the start of the UTF-8 character it points into, so text is
+ * never cut in the middle of a multi-byte character. Never returns 0 for a
+ * non-zero `pos`: callers advance by the result and must not get stuck.
+ */
+static size_t elements_utf8_boundary(const char* text, size_t pos) {
+    size_t back = pos;
+    while(back > 0 && elements_utf8_is_continuation(text[back])) back--;
+    if(back > 0 || pos == 0) return back;
+    while(text[pos] && elements_utf8_is_continuation(text[pos])) pos++;
+    return pos;
+}
+
+/** Remove the last UTF-8 character of the string. */
+static void elements_utf8_pop_back(FuriString* string) {
+    size_t size = furi_string_size(string);
+    if(size == 0) return;
+    size--;
+    while(size > 0 && elements_utf8_is_continuation(furi_string_get_char(string, size))) size--;
+    furi_string_left(string, size);
+}
+
 void elements_progress_bar(Canvas* canvas, int32_t x, int32_t y, size_t width, float progress) {
     furi_check(canvas);
     furi_check((progress >= 0.0f) && (progress <= 1.0f));
@@ -324,6 +349,9 @@ static size_t
         result = text_size;
     }
 
+    // `result` counts bytes: do not split a multi-byte UTF-8 character
+    result = elements_utf8_boundary(text, result);
+
     furi_string_free(str);
     return result;
 }
@@ -365,7 +393,9 @@ void elements_multiline_text_aligned(
         } else if((y + font_height) > canvas_height(canvas)) {
             line = furi_string_alloc_printf("%.*s...\n", chars_fit, start);
         } else {
-            chars_fit -= 1; // account for the dash
+            // account for the dash, staying on a UTF-8 character boundary
+            size_t cut = elements_utf8_boundary(start, chars_fit - 1);
+            if(cut > 0) chars_fit = cut;
             line = furi_string_alloc_printf("%.*s-\n", chars_fit, start);
         }
         canvas_draw_str_aligned(canvas, x, y, horizontal, vertical, furi_string_get_cstr(line));
@@ -639,7 +669,7 @@ void elements_string_fit_width(Canvas* canvas, FuriString* string, size_t width)
     if(len_px > width) {
         width -= canvas_string_width(canvas, "...");
         do {
-            furi_string_left(string, furi_string_size(string) - 1);
+            elements_utf8_pop_back(string);
             len_px = canvas_string_width(canvas, furi_string_get_cstr(string));
         } while(len_px > width);
         furi_string_cat(string, "...");
@@ -683,7 +713,7 @@ void elements_scrollable_text_line(
 
         len_px = canvas_string_width(canvas, furi_string_get_cstr(line));
         while(len_px > width) {
-            furi_string_left(line, furi_string_size(line) - 1);
+            elements_utf8_pop_back(line);
             len_px = canvas_string_width(canvas, furi_string_get_cstr(line));
         }
 

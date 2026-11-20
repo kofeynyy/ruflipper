@@ -192,8 +192,25 @@ class U8g2Font:
         return (w, pixels, dx, x_off, y_off, h)
 
 
+def utf8_boundary(text: bytes, pos: int) -> int:
+    """Port of elements_utf8_boundary() from elements.c."""
+
+    def cont(i):
+        return i < len(text) and (text[i] & 0xC0) == 0x80
+
+    back = pos
+    while back > 0 and cont(back):
+        back -= 1
+    if back > 0 or pos == 0:
+        return back
+    while pos < len(text) and cont(pos):
+        pos += 1
+    return pos
+
+
 class Screen:
-    def __init__(self, font: U8g2Font):
+    def __init__(self, font: U8g2Font, byte_wrap: bool = False):
+        self.byte_wrap = byte_wrap  # reproduce the old behaviour that split UTF-8
         self.font = font
         self.fb = set()
         self.clipped = False
@@ -250,8 +267,11 @@ class Screen:
             excess = math.ceil((len_px - px_left) / (len_px / size))
             if excess > 0:
                 excess = max(excess, 5)
-                return size - excess - 1
-        return size
+                return self._safe(text, size - excess - 1)
+        return self._safe(text, size)
+
+    def _safe(self, text: bytes, pos: int) -> int:
+        return pos if self.byte_wrap else utf8_boundary(text, pos)
 
     def multiline(self, x: int, y: int, text: bytes):
         """Port of elements_multiline_text_aligned(AlignLeft, AlignTop)."""
@@ -265,7 +285,11 @@ class Screen:
             elif y + fh > SCREEN_H:
                 line = text[pos : pos + fit] + b"..."
             else:
-                fit -= 1
+                if self.byte_wrap:
+                    fit -= 1
+                else:
+                    cut = utf8_boundary(text[pos:], fit - 1)
+                    fit = cut if cut > 0 else fit
                 line = text[pos : pos + fit] + b"-"
             self.draw(x, y + self.font.ascent_a, line.split(b"\n")[0])
             y += fh
@@ -305,6 +329,7 @@ def main():
     t.add_argument("--file", help="UTF-8 text file to draw")
     ap.add_argument("--x", type=int, default=0)
     ap.add_argument("--y", type=int, default=0, help="top of the first line (AlignTop)")
+    ap.add_argument("--byte-wrap", action="store_true", help="reproduce the old byte-wise wrapping")
     ap.add_argument("--scale", type=int, default=6)
     ap.add_argument("-o", "--out", default=str(ROOT / "build" / "i18n_preview.png"))
     a = ap.parse_args()
@@ -317,7 +342,7 @@ def main():
     else:
         text = DEFAULT_TEXT
 
-    scr = Screen(U8g2Font(font_name))
+    scr = Screen(U8g2Font(font_name), a.byte_wrap)
     scr.multiline(a.x, a.y, text.encode("utf-8"))
     scr.save(Path(a.out), a.scale)
 
