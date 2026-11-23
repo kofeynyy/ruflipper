@@ -57,22 +57,22 @@ typedef struct {
 } LoaderError;
 
 static const LoaderError err_app_not_found =
-    {"App Not Found", "Update firmware or app", "err_01", &I_err_01};
-static const LoaderError err_invalid_flie = {"Invalid File", "Update the app", "err_02", &I_err_02};
+    {TR_NOOP("App Not Found"), TR_NOOP("Update firmware or app"), "err_01", &I_err_01};
+static const LoaderError err_invalid_flie = {TR_NOOP("Invalid File"), TR_NOOP("Update the app"), "err_02", &I_err_02};
 static const LoaderError err_invalid_manifest =
-    {"Invalid Manifest", "Update firmware or app", "err_03", &I_err_03};
+    {TR_NOOP("Invalid Manifest"), TR_NOOP("Update firmware or app"), "err_03", &I_err_03};
 static const LoaderError err_missing_imports =
-    {"Missing Imports", "Update firmware", "err_04", &I_err_04};
+    {TR_NOOP("Missing Imports"), TR_NOOP("Update firmware"), "err_04", &I_err_04};
 static const LoaderError err_hw_target_mismatch =
-    {"HW Target\nMismatch", "App not supported", "err_05", &I_err_05};
-static const LoaderError err_outdated_app = {"Outdated App", "Update the app", "err_06", &I_err_06};
+    {TR_NOOP("HW Target\nMismatch"), TR_NOOP("App not supported"), "err_05", &I_err_05};
+static const LoaderError err_outdated_app = {TR_NOOP("Outdated App"), TR_NOOP("Update the app"), "err_06", &I_err_06};
 static const LoaderError err_outdated_firmware =
-    {"Outdated\nFirmware", "Update firmware", "err_07", &I_err_07};
+    {TR_NOOP("Outdated\nFirmware"), TR_NOOP("Update firmware"), "err_07", &I_err_07};
 
 static void loader_dialog_prepare_and_show(DialogsApp* dialogs, const LoaderError* err) {
-    FuriString* header = furi_string_alloc_printf("Error: %s", err->error);
+    FuriString* header = furi_string_alloc_printf(TR("Error: %s"), TR(err->error));
     FuriString* text =
-        furi_string_alloc_printf("%s\nLearn more:\nr.flipper.net/%s", err->description, err->url);
+        furi_string_alloc_printf(TR("%s\nLearn more:\nr.flipper.net/%s"), TR(err->description), err->url);
     DialogMessage* message = dialog_message_alloc();
 
     dialog_message_set_header(message, furi_string_get_cstr(header), 64, 0, AlignCenter, AlignTop);
@@ -100,11 +100,11 @@ static void loader_show_gui_error(
         const char* text = NULL;
         Storage* storage = furi_record_open(RECORD_STORAGE);
         if(storage_sd_status(storage) == FSE_OK) {
-            header = "Update needed";
-            text = "Update firmware\nto run this app";
+            header = TR("Update needed");
+            text = TR("Update firmware\nto run this app");
         } else {
-            header = "SD card needed";
-            text = "Install SD card\nto run this app";
+            header = TR("SD card needed");
+            text = TR("Install SD card\nto run this app");
         }
         furi_record_close(RECORD_STORAGE);
         dialog_message_set_header(message, header, 64, 3, AlignCenter, AlignTop);

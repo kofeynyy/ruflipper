@@ -14,7 +14,7 @@ enum BtSettingIndex {
 };
 
 const char* const bt_settings_text[BtSettingNum] = {
-    "OFF",
+    TR_NOOP("OFF"),
     "ON",
 };
 
@@ -59,7 +59,7 @@ void bt_settings_scene_start_on_enter(void* context) {
             var_item_list, bt_settings_scene_start_var_list_enter_callback, app);
     } else {
         item = variable_item_list_add(var_item_list, TR("Bluetooth"), 1, NULL, NULL);
-        variable_item_set_current_value_text(item, "Broken");
+        variable_item_set_current_value_text(item, TR("Broken"));
     }
 
     view_dispatcher_switch_to_view(app->view_dispatcher, BtSettingsAppViewVarItemList);

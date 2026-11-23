@@ -47,7 +47,7 @@ void ibutton_scene_write_on_enter(void* context) {
 
     if(furi_string_empty(ibutton->file_path)) {
         furi_string_printf(
-            tmp, "Unsaved\n%s", ibutton_protocols_get_name(ibutton->protocols, protocol_id));
+            tmp, TR("Unsaved\n%s"), ibutton_protocols_get_name(ibutton->protocols, protocol_id));
     } else {
         furi_string_printf(tmp, "%s", ibutton->key_name);
     }
@@ -58,11 +58,11 @@ void ibutton_scene_write_on_enter(void* context) {
     ibutton_worker_write_set_callback(worker, ibutton_scene_write_callback, ibutton);
 
     if(ibutton->write_mode == iButtonWriteModeId) {
-        furi_string_set(tmp, "Writing ID");
+        furi_string_set(tmp, TR("Writing ID"));
         ibutton_worker_write_id_start(worker, key);
 
     } else if(ibutton->write_mode == iButtonWriteModeCopy) {
-        furi_string_set(tmp, "Full Writing");
+        furi_string_set(tmp, TR("Full Writing"));
         ibutton_worker_write_copy_start(worker, key);
     }
 
@@ -90,7 +90,7 @@ bool ibutton_scene_write_on_event(void* context, SceneManagerEvent event) {
         } else if(event.event == iButtonCustomEventWorkerWriteCannotWrite) {
             FuriString* reason = furi_string_alloc();
             ibutton_protocols_render_error(ibutton->protocols, ibutton->key, reason);
-            if(furi_string_empty(reason)) furi_string_set(reason, "This key cannot be written");
+            if(furi_string_empty(reason)) furi_string_set(reason, TR("This key cannot be written"));
             ibutton_scene_write_show_error(ibutton, furi_string_get_cstr(reason));
             furi_string_free(reason);
 

@@ -53,8 +53,8 @@ bool infrared_scene_learn_enter_name_on_event(void* context, SceneManagerEvent e
             } else {
                 infrared_show_error_message(
                     infrared,
-                    "Failed to\n%s",
-                    infrared->app_state.is_learning_new_remote ? "create file" : "add signal");
+                    TR("Failed to\n%s"),
+                    infrared->app_state.is_learning_new_remote ? TR("create file") : TR("add signal"));
                 const uint32_t possible_scenes[] = {InfraredSceneRemoteList, InfraredSceneStart};
                 scene_manager_search_and_switch_to_previous_scene_one_of(
                     scene_manager, possible_scenes, COUNT_OF(possible_scenes));

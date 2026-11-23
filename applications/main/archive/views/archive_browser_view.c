@@ -9,16 +9,16 @@
 #define SCROLL_DELAY    (2)
 
 static const char* ArchiveTabNames[] = {
-    [ArchiveTabFavorites] = "Favorites",
-    [ArchiveTabIButton] = "iButton",
-    [ArchiveTabNFC] = "NFC",
-    [ArchiveTabSubGhz] = "Sub-GHz",
-    [ArchiveTabLFRFID] = "RFID LF",
-    [ArchiveTabInfrared] = "Infrared",
-    [ArchiveTabBadUsb] = "Bad USB",
+    [ArchiveTabFavorites] = TR_NOOP("Favorites"),
+    [ArchiveTabIButton] = TR_NOOP("iButton"),
+    [ArchiveTabNFC] = TR_NOOP("NFC"),
+    [ArchiveTabSubGhz] = TR_NOOP("Sub-GHz"),
+    [ArchiveTabLFRFID] = TR_NOOP("RFID LF"),
+    [ArchiveTabInfrared] = TR_NOOP("Infrared"),
+    [ArchiveTabBadUsb] = TR_NOOP("Bad USB"),
     [ArchiveTabU2f] = "U2F",
-    [ArchiveTabApplications] = "Apps",
-    [ArchiveTabBrowser] = "Browser",
+    [ArchiveTabApplications] = TR_NOOP("Apps"),
+    [ArchiveTabBrowser] = TR_NOOP("Browser"),
 };
 
 static const Icon* ArchiveItemIcons[] = {
@@ -57,10 +57,10 @@ static void render_item_menu(Canvas* canvas, ArchiveBrowserViewModel* model) {
 
     FuriString* menu[MENU_ITEMS];
 
-    menu[0] = furi_string_alloc_set("Run in app");
-    menu[1] = furi_string_alloc_set("Pin");
-    menu[2] = furi_string_alloc_set("Rename");
-    menu[3] = furi_string_alloc_set("Delete");
+    menu[0] = furi_string_alloc_set(TR("Run in app"));
+    menu[1] = furi_string_alloc_set(TR("Pin"));
+    menu[2] = furi_string_alloc_set(TR("Rename"));
+    menu[3] = furi_string_alloc_set(TR("Delete"));
 
     ArchiveFile_t* selected =
         archive_is_item_in_array(model, model->item_idx) ?
@@ -73,7 +73,7 @@ static void render_item_menu(Canvas* canvas, ArchiveBrowserViewModel* model) {
         }
     } else {
         if((selected->fav) || (model->tab_idx == ArchiveTabFavorites)) {
-            furi_string_set(menu[1], "Unpin");
+            furi_string_set(menu[1], TR("Unpin"));
         }
 
         if(!archive_is_known_app(selected->type)) {
@@ -81,7 +81,7 @@ static void render_item_menu(Canvas* canvas, ArchiveBrowserViewModel* model) {
             furi_string_set(menu[1], "---");
         } else {
             if(model->tab_idx == ArchiveTabFavorites) {
-                furi_string_set(menu[2], "Move");
+                furi_string_set(menu[2], TR("Move"));
                 furi_string_set(menu[3], "---");
             } else if(selected->is_app) {
                 furi_string_set(menu[2], "---");
@@ -207,7 +207,7 @@ static void draw_list(Canvas* canvas, ArchiveBrowserViewModel* model) {
 static void archive_render_status_bar(Canvas* canvas, ArchiveBrowserViewModel* model) {
     furi_assert(model);
 
-    const char* tab_name = ArchiveTabNames[model->tab_idx];
+    const char* tab_name = TR(ArchiveTabNames[model->tab_idx]);
 
     canvas_draw_icon(canvas, 0, 0, &I_Background_128x11);
 

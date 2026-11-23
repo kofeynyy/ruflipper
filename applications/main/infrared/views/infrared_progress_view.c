@@ -42,7 +42,7 @@ static void infrared_progress_view_draw_callback(Canvas* canvas, void* _model) {
         y + 9,
         AlignCenter,
         AlignCenter,
-        model->is_paused ? "Paused" : "Sending...");
+        model->is_paused ? TR("Paused") : TR("Sending..."));
 
     float progress_value = (float)model->progress / model->progress_total;
     elements_progress_bar(canvas, x + 4, y + 19, width - 7, progress_value);
@@ -69,7 +69,7 @@ static void infrared_progress_view_draw_callback(Canvas* canvas, void* _model) {
     canvas_draw_str(canvas, buttons_x + 14, buttons_y + 8, model->is_paused ? "resume" : "stop");
 
     canvas_draw_icon(canvas, buttons_x + 1, buttons_y + 10, &I_Ok_btn_9x9);
-    canvas_draw_str(canvas, buttons_x + 14, buttons_y + 17, model->is_paused ? "send 1" : "pause");
+    canvas_draw_str(canvas, buttons_x + 14, buttons_y + 17, model->is_paused ? TR("send 1") : "pause");
 
     if(model->is_paused) {
         canvas_draw_icon(canvas, buttons_x + 2, buttons_y + 21, &I_ButtonLeftSmall_3x5);

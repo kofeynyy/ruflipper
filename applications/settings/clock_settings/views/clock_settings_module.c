@@ -151,7 +151,7 @@ static void
         ROW_2_H,
         FontPrimary,
         get_state(model, 2, 2),
-        model->alarm_enabled ? "On" : "Off");
+        model->alarm_enabled ? TR("On") : TR("Off"));
 }
 
 static void clock_settings_module_draw_callback(Canvas* canvas, void* _model) {

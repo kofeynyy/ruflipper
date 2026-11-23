@@ -52,7 +52,7 @@ bool storage_settings_scene_factory_reset_on_event(void* context, SceneManagerEv
             if(counter < STORAGE_SETTINGS_SCENE_FACTORY_RESET_CONFIRM_COUNT) {
                 furi_string_printf(
                     app->text_string,
-                    "%ld presses left",
+                    TR("%ld presses left"),
                     STORAGE_SETTINGS_SCENE_FACTORY_RESET_CONFIRM_COUNT - counter);
                 dialog_ex_set_text(
                     app->dialog_ex,

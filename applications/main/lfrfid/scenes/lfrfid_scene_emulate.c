@@ -1,13 +1,14 @@
 #include "../lfrfid_i.h"
+#include <locale/locale.h>
 
 void lfrfid_scene_emulate_on_enter(void* context) {
     LfRfid* app = context;
     Widget* widget = app->widget;
 
-    FuriString* display_text = furi_string_alloc_set("\e#Emulating\e#\n");
+    FuriString* display_text = furi_string_alloc_set(TR("\e#Emulating\e#\n"));
 
     if(furi_string_empty(app->file_name)) {
-        furi_string_cat(display_text, "Unsaved\n");
+        furi_string_cat(display_text, TR("Unsaved\n"));
         furi_string_cat(display_text, protocol_dict_get_name(app->dict, app->protocol_id));
     } else {
         furi_string_cat(display_text, app->file_name);

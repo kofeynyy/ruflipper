@@ -31,7 +31,7 @@ void lfrfid_scene_write_on_enter(void* context) {
         snprintf(
             app->text_store,
             LFRFID_TEXT_STORE_SIZE,
-            "Unsaved\n%s",
+            TR("Unsaved\n%s"),
             protocol_dict_get_name(app->dict, app->protocol_id));
         popup_set_text(popup, app->text_store, 94, 29, AlignCenter, AlignTop);
     }

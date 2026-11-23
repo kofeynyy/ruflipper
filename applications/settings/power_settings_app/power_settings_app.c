@@ -1,13 +1,14 @@
 #include "power_settings_app.h"
+#include <locale/locale.h>
 
 const SubmenuSettingsHelperDescriptor settings_helper_descriptor = {
     .app_name = "Power",
     .options_cnt = 3,
     .options =
         {
-            {.name = "Battery Info", .scene_id = PowerSettingsAppSceneBatteryInfo},
-            {.name = "Reboot", .scene_id = PowerSettingsAppSceneReboot},
-            {.name = "Power OFF", .scene_id = PowerSettingsAppScenePowerOff},
+            {.name = TR_NOOP("Battery Info"), .scene_id = PowerSettingsAppSceneBatteryInfo},
+            {.name = TR_NOOP("Reboot"), .scene_id = PowerSettingsAppSceneReboot},
+            {.name = TR_NOOP("Power OFF"), .scene_id = PowerSettingsAppScenePowerOff},
         },
 };
 

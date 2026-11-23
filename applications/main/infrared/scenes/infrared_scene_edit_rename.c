@@ -99,12 +99,12 @@ bool infrared_scene_edit_rename_on_event(void* context, SceneManagerEvent event)
                 bool long_signal = INFRARED_ERROR_CHECK(
                     task_error, InfraredErrorCodeSignalRawUnableToReadTooLongData);
 
-                const char* format = "Failed to rename\n%s";
+                const char* format = TR("Failed to rename\n%s");
                 const char* target = infrared->app_state.edit_target == InfraredEditTargetButton ?
                                          "button" :
                                          "file";
                 if(long_signal) {
-                    format = "Failed to rename\n\"%s\" is too long.\nTry to edit file from pc";
+                    format = TR("Failed to rename\n\"%s\" is too long.\nTry to edit file from pc");
                     target = infrared_remote_get_signal_name(
                         infrared->remote, INFRARED_ERROR_GET_INDEX(task_error));
                 }

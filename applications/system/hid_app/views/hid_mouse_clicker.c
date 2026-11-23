@@ -69,13 +69,13 @@ static void hid_mouse_clicker_draw_callback(Canvas* canvas, void* context) {
     const char* btn_label;
     switch(model->btn) {
     case HID_MOUSE_BTN_LEFT:
-        btn_label = "Left";
+        btn_label = TR("Left");
         break;
     case HID_MOUSE_BTN_WHEEL:
-        btn_label = "Middle";
+        btn_label = TR("Middle");
         break;
     case HID_MOUSE_BTN_RIGHT:
-        btn_label = "Right";
+        btn_label = TR("Right");
         break;
     default:
         furi_crash();
@@ -100,9 +100,9 @@ static void hid_mouse_clicker_draw_callback(Canvas* canvas, void* context) {
     // Clicks/s
     char label[20];
     if(model->rate) {
-        snprintf(label, sizeof(label), "%d clicks/s", model->rate);
+        snprintf(label, sizeof(label), TR("%d clicks/s"), model->rate);
     } else {
-        snprintf(label, sizeof(label), "max clicks/s");
+        snprintf(label, sizeof(label), TR("max clicks/s"));
     }
     elements_multiline_text_aligned(canvas, 28, 37, AlignCenter, AlignBottom, label);
 

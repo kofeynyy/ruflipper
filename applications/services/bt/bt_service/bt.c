@@ -47,7 +47,7 @@ static void bt_pin_code_view_port_draw_callback(Canvas* canvas, void* context) {
     Bt* bt = context;
     char pin_code_info[24];
     canvas_draw_icon(canvas, 0, 0, &I_BLE_Pairing_128x64);
-    snprintf(pin_code_info, sizeof(pin_code_info), "Pairing code\n%06lu", bt->pin_code);
+    snprintf(pin_code_info, sizeof(pin_code_info), TR("Pairing code\n%06lu"), bt->pin_code);
     elements_multiline_text_aligned(canvas, 64, 4, AlignCenter, AlignTop, pin_code_info);
     elements_button_left(canvas, TR("Quit"));
 }
@@ -112,7 +112,7 @@ static bool bt_pin_code_verify_event_handler(Bt* bt, uint32_t pin) {
         bt->dialog_message = dialog_message_alloc();
     }
     dialog_message_set_icon(bt->dialog_message, &I_BLE_Pairing_128x64, 0, 0);
-    pin_str = furi_string_alloc_printf("Verify code\n%06lu", pin);
+    pin_str = furi_string_alloc_printf(TR("Verify code\n%06lu"), pin);
     dialog_message_set_text(
         bt->dialog_message, furi_string_get_cstr(pin_str), 64, 4, AlignCenter, AlignTop);
     dialog_message_set_buttons(bt->dialog_message, TR("Cancel"), TR("OK"), NULL);
@@ -424,7 +424,7 @@ static void bt_change_profile(Bt* bt, BtMessage* message) {
         }
 
     } else {
-        bt_show_warning(bt, "Radio stack doesn't support this app");
+        bt_show_warning(bt, TR("Radio stack doesn't support this app"));
         if(message->result) {
             *message->result = false;
         }
@@ -449,7 +449,7 @@ static void bt_apply_settings(Bt* bt) {
 
 static void bt_load_keys(Bt* bt) {
     if(!furi_hal_bt_is_gatt_gap_supported()) {
-        bt_show_warning(bt, "Unsupported radio stack");
+        bt_show_warning(bt, TR("Unsupported radio stack"));
         bt->status = BtStatusUnavailable;
         return;
 

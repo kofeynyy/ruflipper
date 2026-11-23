@@ -17,7 +17,7 @@ enum GpioOtg {
 };
 
 const char* const gpio_otg_text[GpioOtgSettingsNum] = {
-    "OFF",
+    TR_NOOP("OFF"),
     "ON",
 };
 

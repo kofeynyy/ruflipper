@@ -1,4 +1,5 @@
 #include <furi.h>
+#include <locale/locale.h>
 #include <gui/elements.h>
 #include <assets_icons.h>
 
@@ -57,18 +58,18 @@ void desktop_lock_menu_draw_callback(Canvas* canvas, void* model) {
         const char* str = NULL;
 
         if(i == DesktopLockMenuIndexLock) {
-            str = "Lock";
+            str = TR("Lock");
         } else if(i == DesktopLockMenuIndexStealth) {
             if(m->stealth_mode) {
-                str = "Unmute";
+                str = TR("Unmute");
             } else {
-                str = "Mute";
+                str = TR("Mute");
             }
         } else if(i == DesktopLockMenuIndexDummy) { //-V547
             if(m->dummy_mode) {
-                str = "Default Mode";
+                str = TR("Default Mode");
             } else {
-                str = "Dummy Mode";
+                str = TR("Dummy Mode");
             }
         }
 

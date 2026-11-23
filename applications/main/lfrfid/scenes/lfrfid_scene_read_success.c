@@ -17,7 +17,7 @@ void lfrfid_scene_read_success_on_enter(void* context) {
         furi_string_printf(display_text, "\e#%s\e#", protocol);
     }
 
-    furi_string_cat(display_text, "\nHex: ");
+    furi_string_cat(display_text, TR("\nHex: "));
 
     const size_t data_size = protocol_dict_get_data_size(app->dict, app->protocol_id);
     uint8_t* data = malloc(data_size);

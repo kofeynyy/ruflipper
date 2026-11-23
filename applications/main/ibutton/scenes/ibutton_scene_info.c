@@ -13,7 +13,7 @@ void ibutton_scene_info_on_enter(void* context) {
 
     furi_string_printf(
         tmp,
-        "Name:%s\n\e#%s %s\e#\n",
+        TR("Name:%s\n\e#%s %s\e#\n"),
         ibutton->key_name,
         ibutton_protocols_get_manufacturer(ibutton->protocols, protocol_id),
         ibutton_protocols_get_name(ibutton->protocols, protocol_id));

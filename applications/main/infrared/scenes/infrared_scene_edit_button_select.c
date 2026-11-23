@@ -1,4 +1,5 @@
 #include "../infrared_app_i.h"
+#include <locale/locale.h>
 
 static void infrared_scene_edit_button_select_submenu_callback(void* context, uint32_t index) {
     InfraredApp* infrared = context;
@@ -12,8 +13,8 @@ void infrared_scene_edit_button_select_on_enter(void* context) {
     InfraredAppState* app_state = &infrared->app_state;
 
     const char* header = infrared->app_state.edit_mode == InfraredEditModeRename ?
-                             "Rename Button:" :
-                             "Delete Button:";
+                             TR("Rename Button:") :
+                             TR("Delete Button:");
     submenu_set_header(submenu, header);
 
     const size_t button_count = infrared_remote_get_signal_count(remote);

@@ -100,7 +100,7 @@ const uint32_t delay_value[DELAY_COUNT] =
 
 #define VIBRO_COUNT 2
 const char* const vibro_text[VIBRO_COUNT] = {
-    "OFF",
+    TR_NOOP("OFF"),
     "ON",
 };
 const bool vibro_value[VIBRO_COUNT] = {false, true};
@@ -218,7 +218,7 @@ static NotificationAppSettings* alloc_settings(void) {
         item = variable_item_list_add(app->variable_item_list, TR("Volume"), 1, NULL, app);
         value_index = 0;
         variable_item_set_current_value_index(item, value_index);
-        variable_item_set_current_value_text(item, "Stealth");
+        variable_item_set_current_value_text(item, TR_NOOP("Stealth"));
     } else {
         item = variable_item_list_add(
             app->variable_item_list, TR("Volume"), VOLUME_COUNT, volume_changed, app);
@@ -232,7 +232,7 @@ static NotificationAppSettings* alloc_settings(void) {
         item = variable_item_list_add(app->variable_item_list, TR("Vibro"), 1, NULL, app);
         value_index = 0;
         variable_item_set_current_value_index(item, value_index);
-        variable_item_set_current_value_text(item, "Stealth");
+        variable_item_set_current_value_text(item, TR_NOOP("Stealth"));
     } else {
         item = variable_item_list_add(
             app->variable_item_list, TR("Vibro"), VIBRO_COUNT, vibro_changed, app);

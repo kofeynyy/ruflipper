@@ -2,13 +2,13 @@
 #include <locale/locale.h>
 
 static const char* infrared_scene_gpio_settings_pin_text[] = {
-    "Flipper",
+    TR_NOOP("Flipper"),
     "2 (A7)",
-    "Detect",
+    TR_NOOP("Detect"),
 };
 
 static const char* infrared_scene_gpio_settings_otg_text[] = {
-    "OFF",
+    TR_NOOP("OFF"),
     "ON",
 };
 
@@ -63,7 +63,7 @@ static void infrared_scene_gpio_settings_init(InfraredApp* infrared) {
     } else {
         variable_item_set_values_count(item, 1);
         variable_item_set_current_value_index(item, 0);
-        variable_item_set_current_value_text(item, "Auto");
+        variable_item_set_current_value_text(item, TR_NOOP("Auto"));
     }
 }
 

@@ -37,15 +37,15 @@ static void gpio_usb_uart_draw_callback(Canvas* canvas, void* _model) {
     canvas_set_font(canvas, FontSecondary);
     snprintf(temp_str, 18, "COM PORT:%u", model->vcp_port);
     canvas_draw_str_aligned(canvas, 126, 8, AlignRight, AlignBottom, temp_str);
-    snprintf(temp_str, 18, "Pin %u", model->tx_pin);
+    snprintf(temp_str, 18, TR("Pin %u"), model->tx_pin);
     canvas_draw_str(canvas, 22, 25, temp_str);
-    snprintf(temp_str, 18, "Pin %u", model->rx_pin);
+    snprintf(temp_str, 18, TR("Pin %u"), model->rx_pin);
     canvas_draw_str(canvas, 22, 42, temp_str);
 
     if(model->baudrate == 0)
-        snprintf(temp_str, 18, "Baud: ????");
+        snprintf(temp_str, 18, TR("Baud: ????"));
     else
-        snprintf(temp_str, 18, "Baud: %lu", model->baudrate);
+        snprintf(temp_str, 18, TR("Baud: %lu"), model->baudrate);
     canvas_draw_str(canvas, 45, 62, temp_str);
 
     if(model->tx_cnt < 100000000) {

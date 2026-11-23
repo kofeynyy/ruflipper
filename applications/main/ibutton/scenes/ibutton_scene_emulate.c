@@ -25,7 +25,7 @@ void ibutton_scene_emulate_on_enter(void* context) {
     if(furi_string_empty(ibutton->file_path)) {
         furi_string_printf(
             tmp,
-            "Unsaved\n%s",
+            TR("Unsaved\n%s"),
             ibutton_protocols_get_name(ibutton->protocols, ibutton_key_get_protocol_id(key)));
     } else {
         furi_string_printf(tmp, "%s", ibutton->key_name);

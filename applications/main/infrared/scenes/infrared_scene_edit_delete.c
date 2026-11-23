@@ -45,8 +45,8 @@ void infrared_scene_edit_delete_on_enter(void* context) {
         if(INFRARED_ERROR_PRESENT(error)) {
             const char* format =
                 (INFRARED_ERROR_CHECK(error, InfraredErrorCodeSignalRawUnableToReadTooLongData)) ?
-                    "Failed to delete\n\"%s\" is too long.\nTry to edit file from pc" :
-                    "Failed to load\n\"%s\"";
+                    TR("Failed to delete\n\"%s\" is too long.\nTry to edit file from pc") :
+                    TR("Failed to load\n\"%s\"");
             infrared_show_error_message(
                 infrared, format, infrared_remote_get_signal_name(remote, current_button_index));
             scene_manager_previous_scene(infrared->scene_manager);
@@ -59,7 +59,7 @@ void infrared_scene_edit_delete_on_enter(void* context) {
             infrared_text_store_set(
                 infrared,
                 0,
-                "%s\nRAW\n%zu samples",
+                TR("%s\nRAW\n%zu samples"),
                 infrared_remote_get_signal_name(remote, current_button_index),
                 raw->timings_size);
 
@@ -82,7 +82,7 @@ void infrared_scene_edit_delete_on_enter(void* context) {
         infrared_text_store_set(
             infrared,
             0,
-            "%s\n with %zu buttons",
+            TR("%s\n with %zu buttons"),
             infrared_remote_get_name(remote),
             infrared_remote_get_signal_count(remote));
     } else {
@@ -123,7 +123,7 @@ bool infrared_scene_edit_delete_on_event(void* context, SceneManagerEvent event)
                        task_error, InfraredErrorCodeSignalRawUnableToReadTooLongData)) {
                     const uint8_t index = INFRARED_ERROR_GET_INDEX(task_error);
                     const char* format =
-                        "Failed to delete\n\"%s\" is too long.\nTry to edit file from pc";
+                        TR("Failed to delete\n\"%s\" is too long.\nTry to edit file from pc");
                     infrared_show_error_message(
                         infrared,
                         format,
@@ -132,7 +132,7 @@ bool infrared_scene_edit_delete_on_event(void* context, SceneManagerEvent event)
                     const char* edit_target_text =
                         app_state->edit_target == InfraredEditTargetButton ? "button" : "file";
                     infrared_show_error_message(
-                        infrared, "Failed to\ndelete %s", edit_target_text);
+                        infrared, TR("Failed to\ndelete %s"), edit_target_text);
                 }
 
                 const uint32_t possible_scenes[] = {InfraredSceneRemoteList, InfraredSceneRemote};

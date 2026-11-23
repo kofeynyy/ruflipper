@@ -1,16 +1,17 @@
 #include "storage_settings.h"
+#include <locale/locale.h>
 
 const SubmenuSettingsHelperDescriptor descriptor_template = {
     .app_name = "Storage",
     .options_cnt = 6,
     .options =
         {
-            {.name = "About Internal Storage", .scene_id = StorageSettingsInternalInfo},
-            {.name = "About SD Card", .scene_id = StorageSettingsSDInfo},
-            {.name = "Unmount SD Card", .scene_id = StorageSettingsUnmountConfirm},
-            {.name = "Format SD Card", .scene_id = StorageSettingsFormatConfirm},
-            {.name = "Benchmark SD Card", .scene_id = StorageSettingsBenchmarkConfirm},
-            {.name = "Factory Reset", .scene_id = StorageSettingsFactoryReset},
+            {.name = TR_NOOP("About Internal Storage"), .scene_id = StorageSettingsInternalInfo},
+            {.name = TR_NOOP("About SD Card"), .scene_id = StorageSettingsSDInfo},
+            {.name = TR_NOOP("Unmount SD Card"), .scene_id = StorageSettingsUnmountConfirm},
+            {.name = TR_NOOP("Format SD Card"), .scene_id = StorageSettingsFormatConfirm},
+            {.name = TR_NOOP("Benchmark SD Card"), .scene_id = StorageSettingsBenchmarkConfirm},
+            {.name = TR_NOOP("Factory Reset"), .scene_id = StorageSettingsFactoryReset},
         },
 };
 

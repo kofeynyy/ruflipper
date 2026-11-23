@@ -15,7 +15,7 @@ typedef enum {
 
 #define AUTO_LOCK_DELAY_COUNT 6
 static const char* const auto_lock_delay_text[AUTO_LOCK_DELAY_COUNT] = {
-    "OFF",
+    TR_NOOP("OFF"),
     "30s",
     "60s",
     "2min",
@@ -27,7 +27,7 @@ static const uint32_t auto_lock_delay_value[AUTO_LOCK_DELAY_COUNT] =
 
 #define CLOCK_ENABLE_COUNT 2
 const char* const clock_enable_text[CLOCK_ENABLE_COUNT] = {
-    "OFF",
+    TR_NOOP("OFF"),
     "ON",
 };
 
