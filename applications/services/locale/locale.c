@@ -133,13 +133,14 @@ void locale_format_date(
 #define LANG_CACHE_MAX_ITEMS 384 /* keeps the table at most 75% full */
 #define LANG_CACHE_MAX_BYTES 24576 /* of string data, in 1 KB arena chunks */
 #define LANG_ARENA_CHUNK     1024
+#define LANG_MISS_SLOTS      128 /* hashes of strings known to have no translation */
 #define LANG_STRING_MAX      255
 #define LANG_RETRY_MS        5000
 #define LANG_RETRY_COUNT     3
 
 typedef struct {
     uint32_t hash;
-    const char* text; /* NULL: free slot, lang_missing: no translation, use the key */
+    const char* text; /* NULL: free slot */
 } LangCacheSlot;
 
 typedef struct LangArena LangArena;
@@ -148,8 +149,6 @@ struct LangArena {
     size_t used;
     char data[LANG_ARENA_CHUNK];
 };
-
-static const char lang_missing = '\0';
 
 typedef struct {
     FuriMutex* mutex;
@@ -161,6 +160,8 @@ typedef struct {
     size_t items;
     size_t bytes;
     LangArena* arena; /* translated strings, never freed: the language is fixed per session */
+    uint32_t misses[LANG_MISS_SLOTS]; /* ring buffer, so texts without translation cost one lookup */
+    uint8_t miss_next;
     bool resolved; /* the saved language has been applied (or there is none) */
     uint8_t retries;
     uint32_t retry_tick;
@@ -375,7 +376,10 @@ static const char* lang_translate(LocaleState* s, const char* key) {
     uint32_t hash = lang_hash(key);
     bool found;
     LangCacheSlot* slot = lang_cache_find(s, hash, &found);
-    if(found) return slot->text == &lang_missing ? key : slot->text;
+    if(found) return slot->text;
+    for(size_t i = 0; i < LANG_MISS_SLOTS; i++) {
+        if(s->misses[i] == hash) return key;
+    }
     if(!slot || s->items >= LANG_CACHE_MAX_ITEMS) return key; /* cache full: stay in English */
 
     const char* text = NULL;
@@ -396,10 +400,15 @@ static const char* lang_translate(LocaleState* s, const char* key) {
         text = copy;
     }
 
+    if(!text) {
+        /* remember the miss in the ring buffer, dynamic texts only evict each other */
+        s->misses[s->miss_next++ % LANG_MISS_SLOTS] = hash;
+        return key;
+    }
     slot->hash = hash;
-    slot->text = text ? text : &lang_missing;
+    slot->text = text;
     s->items++;
-    return text ? text : key;
+    return text;
 }
 
 /** Text of a key without its context prefix ("context\004text"). */

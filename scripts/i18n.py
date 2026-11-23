@@ -7,9 +7,16 @@ optional metadata keys, "@@code" (e.g. "ru") and "@@name" (shown in the language
 
 Commands:
     extract  [-o assets/lang/en.json]      collect every TR("...") from the sources
-    check    assets/lang/ru.json           report missing and unused translations
-    pack     assets/lang/ru.json -o ru.lang  build the binary pack read by the firmware
+    check    assets/lang/ru.json           report missing, unused and empty translations, bad printf specifiers
+    widths   assets/lang/ru.json           list translations wider than the room of their widget
+    measure  "Text\nsecond line"            width of a text in pixels for each kind of widget
+    sync     assets/lang/ru.json           add the new strings of the code to the json as empty entries, in source order
+    sheet    assets/lang/ru.json [-o file] translator's sheet: every string, where it is shown, width budget
+    build                                  check + widths + pack every assets/lang/*.json into the firmware resources
+    pack     assets/lang/ru.json -o ru.lang  build one binary pack
     lookup   ru.lang "English text"        read a string back from a pack (format test)
+
+All translations live in assets/lang/<code>.json; the .lang files are generated from them.
 
 Pack format (little endian), see documentation/Localization.md:
     0   char[4] magic "FLNG"
@@ -114,23 +121,39 @@ def extract_keys() -> dict:
 
 FUNCS = {}  # key -> names of the functions it is passed to, filled by extract_keys()
 
-# texts drawn with FontPrimary, everything else uses FontSecondary
-PRIMARY_FUNCS = {
-    "submenu_add_item",
-    "submenu_add_lockable_item",
-    "submenu_set_header",
-    "variable_item_list_add",
-    "dialog_ex_set_header",
-    "dialog_ex_set_left_button_text",
-    "dialog_ex_set_center_button_text",
-    "dialog_ex_set_right_button_text",
-    "dialog_message_set_header",
-    "dialog_message_set_buttons",
-    "popup_set_header",
-    "elements_button_left",
-    "elements_button_center",
-    "elements_button_right",
-    "widget_add_button_element",
+# Where a text is drawn decides its font and how wide a line may be. The budgets are in pixels
+# of the 128x64 screen and are estimates of the free space of each widget: change them here
+# if a screen turns out to have more or less room. Everything not listed is a free text.
+#   kind -> (font, max line width in px)
+KINDS = {
+    "menu_item": ("primary", 100),  # main menu rows (icon on the left)
+    "list_item": ("primary", 116),  # submenu rows
+    "list_label": ("primary", 70),  # label of a settings row, the value sits on the right
+    "button": ("primary", 52),  # left / right button of a dialog or a bottom bar
+    "button_center": ("primary", 44),
+    "header": ("primary", 126),  # dialog / popup headers
+    "text": ("secondary", 126),  # dialog, popup, widget texts
+    "keyboard": ("keyboard", 126),
+}
+FUNC_KIND = {
+    "submenu_add_item": "list_item",
+    "submenu_add_item_ex": "list_item",
+    "submenu_add_lockable_item": "list_item",
+    "submenu_set_header": "header",
+    "submenu_change_item_label": "list_item",
+    "variable_item_list_add": "list_label",
+    "dialog_ex_set_header": "header",
+    "dialog_ex_set_left_button_text": "button",
+    "dialog_ex_set_right_button_text": "button",
+    "dialog_ex_set_center_button_text": "button_center",
+    "dialog_message_set_header": "header",
+    "dialog_message_set_buttons": "button",
+    "popup_set_header": "header",
+    "elements_button_left": "button",
+    "elements_button_right": "button",
+    "elements_button_center": "button_center",
+    "widget_add_button_element": "button",
+    "menu_add_item": "menu_item",
 }
 
 FMT_RE = re.compile(r"%[-+ #0-9.*]*(?:hh|h|ll|l|z|j|t|L)?[a-zA-Z%]")
@@ -219,30 +242,166 @@ def cmd_check(a):
     sys.exit(1 if missing or empty or badfmt else 0)
 
 
-def cmd_widths(a):
-    """Flag translations whose lines are wider than the screen or much wider than the English."""
+def _screens():
     sys.path.insert(0, str(Path(__file__).resolve().parent))
     import i18n_preview as pv
 
-    extract_keys()
-    fonts = {
-        "primary": pv.Screen(pv.U8g2Font(pv.flipper_font_name("primary"))),
-        "secondary": pv.Screen(pv.U8g2Font(pv.flipper_font_name("secondary"))),
+    return pv, {
+        name: pv.Screen(pv.U8g2Font(pv.flipper_font_name(name))) for name in ("primary", "secondary", "keyboard")
     }
-    tr = load_json(a.source)
-    shown = 0
-    for key, value in tr.items():
-        if key in META_KEYS or not value.strip():
+
+
+def _sample(text: str) -> str:
+    """Replace printf specifiers with typical values so dynamic texts can be measured."""
+    return FMT_RE.sub(lambda m: "%" if m.group(0) == "%%" else ("0000" if m.group(0)[-1] in "duxXfF" else "abcdef"), text)
+
+
+def _lines_px(scr, text: str):
+    return [scr.width(_sample(line).encode()) for line in text.replace("\x1b#", "").split("\n")]
+
+
+def _plain(key: str) -> str:
+    """Key without the context prefix of TRC()."""
+    return key.split(CTX_SEP, 1)[1] if CTX_SEP in key else key
+
+
+def analyze(source: str):
+    """One row per string in the code: where it is used, its width budget and the fit of the translation."""
+    pv, scr = _screens()
+    found = extract_keys()
+    tr = load_json(source)
+    rows = []
+    for key, where in found.items():
+        funcs = sorted(FUNCS.get(key, {"?"}))
+        kinds = [FUNC_KIND[f] for f in funcs if f in FUNC_KIND]
+        kind = kinds[0] if kinds else "text"
+        font, limit = KINDS[kind]
+        en = _lines_px(scr[font], _plain(key))
+        value = tr.get(key, "")
+        ru = _lines_px(scr[font], value) if value.strip() else []
+        rows.append(
+            {
+                "key": key,
+                "value": value,
+                "where": where[0],
+                "uses": len(where),
+                "funcs": funcs,
+                "kind": kind,
+                "font": font,
+                "limit": limit,
+                "en": en,
+                "ru": ru,
+                "over": bool(ru) and max(ru) > limit,
+                "en_over": max(en) > limit,
+            }
+        )
+    rows.sort(key=lambda r: (r["where"].split(":")[0], int(r["where"].split(":")[1])))
+    return rows
+
+
+def cmd_widths(a):
+    """List translations with a line wider than the budget of the widget they are shown in."""
+    rows = analyze(a.source)
+    bad = [r for r in rows if r["over"]]
+    for r in bad:
+        print(
+            f"{max(r['ru']):3}px > {r['limit']:3}px ({r['kind']}, English {max(r['en'])}px)  "
+            f"{_plain(r['key'])!r} -> {r['value']!r}  [{r['where']}]"
+        )
+    print(f"{len(bad)} translations are wider than their budget")
+    sys.exit(1 if bad else 0)
+
+
+def cmd_measure(a):
+    """Width of a text in pixels, line by line: python scripts/i18n.py measure "Текст\\nвторая строка" """
+    _, scr = _screens()
+    text = a.text.replace("\\n", "\n")
+    for kind, (font, limit) in KINDS.items():
+        if a.font and font != a.font:
             continue
-        funcs = FUNCS.get(key, {"?"})
-        font = "primary" if funcs & PRIMARY_FUNCS else "secondary"
-        scr = fonts[font]
-        en = max(scr.width(line.encode()) for line in key.split("\n"))
-        ru = max(scr.width(line.encode()) for line in value.split("\n"))
-        if ru > pv.SCREEN_W - 2 or (ru > en * a.ratio and ru > a.min_width):
-            shown += 1
-            print(f"{ru:3}px vs {en:3}px {font:9} {key!r} -> {value!r}")
-    print(shown, "strings to review")
+        if not a.font and kind not in ("menu_item", "list_item", "list_label", "button", "text"):
+            continue
+        widths = _lines_px(scr[font], text)
+        mark = "OK " if max(widths) <= limit else "TOO WIDE"
+        print(f"{kind:13} {font:9} limit {limit:3}px  lines {widths}  {mark}")
+
+
+def cmd_sheet(a):
+    """Write a translator's sheet (Markdown) with every string, its place on screen and its width budget."""
+    rows = analyze(a.source)
+    out = []
+    out.append(f"# Translator's sheet ({len(rows)} strings)\n")
+    out.append("Edit `assets/lang/ru.json` (the only place where translations are stored); this sheet is generated.\n")
+    out.append("Widths are in pixels of the 128x64 screen. `limit` is the room of the widget (see KINDS in scripts/i18n.py).\n")
+    out.append("| # | where | kind (font, limit) | English (px) | translation (px) | |")
+    out.append("|---|---|---|---|---|---|")
+
+    def cell(text):
+        return text.replace("\x1b#", "").replace("\x04", "").replace("|", "\\|").replace("\n", " ⏎ ")
+
+    for i, r in enumerate(rows, 1):
+        ctx = r["key"].split(CTX_SEP, 1)[0] + "·" if CTX_SEP in r["key"] else ""
+        status = "" if not r["value"].strip() else ("OVERFLOW" if r["over"] else "ok")
+        if not r["value"].strip():
+            status = "TODO"
+        ru = f"{cell(r['value'])} ({'/'.join(map(str, r['ru']))})" if r["ru"] else ""
+        out.append(
+            f"| {i} | {r['where']} | {r['kind']} ({r['font']}, {r['limit']}) | "
+            f"{ctx}{cell(_plain(r['key']))} ({'/'.join(map(str, r['en']))}) | {ru} | {status} |"
+        )
+    Path(a.out).parent.mkdir(parents=True, exist_ok=True)
+    Path(a.out).write_text("\n".join(out) + "\n", encoding="utf-8")
+    todo = sum(1 for r in rows if not r["value"].strip())
+    over = sum(1 for r in rows if r["over"])
+    print(f"{len(rows)} strings, {todo} not translated, {over} too wide -> {a.out}")
+
+
+def cmd_sync(a):
+    """Add every string of the code that has no entry yet to the json (empty, to be filled in by hand).
+
+    Entries are ordered like the sources (file, line), so the strings of one screen are next to each
+    other. Existing translations are never changed; entries that are no longer used stay at the end.
+    """
+    data = load_json(a.source)
+    found = extract_keys()
+    meta = {k: v for k, v in data.items() if k in META_KEYS}
+    order = sorted(found, key=lambda k: (found[k][0].split(":")[0], int(found[k][0].split(":")[1])))
+    out = dict(meta)
+    added = 0
+    for key in order:
+        if key not in data:
+            added += 1
+        out[key] = data.get(key, "")
+    stale = [k for k in data if k not in META_KEYS and k not in found]
+    for key in stale:
+        out[key] = data[key]
+    Path(a.source).write_text(json.dumps(out, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    print(f"{added} new empty entries, {len(stale)} entries no longer used by the code (kept at the end)")
+
+
+def cmd_build(a):
+    """check + width review + pack every assets/lang/*.json into the firmware resources."""
+    for src in sorted((ROOT / "assets" / "lang").glob("*.json")):
+        if src.stem == "en":
+            continue
+        data = load_json(str(src))
+        code = data.get("@@code", src.stem)
+        keys = set(extract_keys())
+        have = {k for k in data if k not in META_KEYS and data[k].strip()}
+        badfmt = [k for k in have if FMT_RE.findall(k) != FMT_RE.findall(data[k])]
+        rows = analyze(str(src))
+        over = [r for r in rows if r["over"]]
+        print(f"{code}: {len(keys)} strings in code, {len(keys & have)} translated, {len(keys - have)} missing, "
+              f"{len(over)} too wide, {len(badfmt)} with wrong printf specifiers")
+        for r in over[:20]:
+            print(f"   too wide ({max(r['ru'])}px > {r['limit']}px): {_plain(r['key'])!r} -> {r['value']!r}")
+        for k in badfmt:
+            print(f"   printf specifiers differ: {k!r}")
+        entries = {k: v for k, v in data.items() if v.strip() or k in META_KEYS}
+        out = ROOT / "applications" / "services" / "locale" / "resources" / "lang" / f"{code}.lang"
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_bytes(build_pack(entries))
+        print(f"   packed {len(entries)} entries -> {out.relative_to(ROOT).as_posix()}")
 
 
 def cmd_pack(a):
@@ -270,9 +429,20 @@ def main():
     p.set_defaults(fn=cmd_check)
     p = sub.add_parser("widths")
     p.add_argument("source")
-    p.add_argument("--ratio", type=float, default=1.3, help="allowed width growth over English")
-    p.add_argument("--min-width", type=int, default=45, help="ignore lines narrower than this")
     p.set_defaults(fn=cmd_widths)
+    p = sub.add_parser("measure")
+    p.add_argument("text")
+    p.add_argument("--font", choices=["primary", "secondary", "keyboard"])
+    p.set_defaults(fn=cmd_measure)
+    p = sub.add_parser("sheet")
+    p.add_argument("source")
+    p.add_argument("-o", "--out", default=str(ROOT / "build" / "i18n_sheet.md"))
+    p.set_defaults(fn=cmd_sheet)
+    p = sub.add_parser("sync")
+    p.add_argument("source")
+    p.set_defaults(fn=cmd_sync)
+    p = sub.add_parser("build")
+    p.set_defaults(fn=cmd_build)
     p = sub.add_parser("pack")
     p.add_argument("source")
     p.add_argument("-o", "--out", required=True)

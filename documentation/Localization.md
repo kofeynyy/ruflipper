@@ -54,6 +54,38 @@ python scripts/i18n.py pack assets/lang/ru.json -o applications/services/locale/
 To add a language, copy `assets/lang/ru.json`, translate it, and put the packed file in
 `/ext/lang/<code>.lang` (codes are 1-7 characters from `a-z 0-9 _ -`).
 
+## Translating by hand
+
+All translations of a language live in one file, `assets/lang/<code>.json` (for Russian
+`assets/lang/ru.json`): `"English text": "translation"`. Nothing else has to be edited; the
+`.lang` pack the firmware reads is generated from it.
+
+1. `python scripts/i18n.py sync assets/lang/ru.json` adds every new string of the code to the file
+   as an empty entry, in source order, so the strings of one screen are next to each other.
+   Existing translations are not touched. Empty entries are shown in English.
+2. Fill in the empty values. In JSON a line break is `
+`; leave `%s`, `%lu`, `%d`... in place and
+   in the same order, and keep `#` pairs (bold text) of the original.
+3. `python scripts/i18n.py build` checks everything and packs the result into
+   `applications/services/locale/resources/lang/ru.lang`. It reports translations that are wider
+   than the room of the widget they are drawn in, and printf specifiers that do not match.
+4. Rebuild the firmware, or copy the new `ru.lang` to `/ext/lang/` on the SD card: the strings are
+   read from the pack, so a changed translation does not need a new firmware.
+
+Tools for the width of a text (all in pixels of the 128x64 screen, using the real fonts):
+
+- `python scripts/i18n.py measure "Text
+second line"`: width of every line for each kind of widget,
+  `TOO WIDE` when it exceeds the room of the widget.
+- `python scripts/i18n.py sheet assets/lang/ru.json`: writes `build/i18n_sheet.md`, a table of all
+  strings with the place in the code, the kind of widget, the English width and the width of the
+  translation.
+- `python scripts/i18n.py widths assets/lang/ru.json`: only the translations that are too wide.
+- `python scripts/i18n_preview.py --font primary --text "..."`: draws the text as the device would.
+
+The room of each kind of widget (`KINDS` in `scripts/i18n.py`) is an estimate. If a screen turns
+out to have more or less space, change the number there; the check follows.
+
 ## Pack format
 
 Little endian. Keys are not stored, only a 32-bit FNV-1a hash of each key; the tool refuses to

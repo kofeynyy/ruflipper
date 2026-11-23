@@ -2,6 +2,7 @@
 #include <gui/elements.h>
 #include <gui/canvas.h>
 #include <furi.h>
+#include <locale/locale.h>
 #include <m-array.h>
 #include <stdint.h>
 
@@ -366,7 +367,7 @@ VariableItem* variable_item_list_add(
         VariableItemListModel * model,
         {
             item = VariableItemArray_push_new(model->items);
-            item->label = label;
+            item->label = TR(label);
             item->values_count = values_count;
             item->change_callback = change_callback;
             item->context = context;
@@ -412,7 +413,7 @@ void variable_item_set_values_count(VariableItem* item, uint8_t values_count) {
 
 void variable_item_set_current_value_text(VariableItem* item, const char* current_value_text) {
     furi_check(item);
-    furi_string_set(item->current_value_text, current_value_text);
+    furi_string_set(item->current_value_text, TR(current_value_text));
 }
 
 uint8_t variable_item_get_current_value_index(VariableItem* item) {

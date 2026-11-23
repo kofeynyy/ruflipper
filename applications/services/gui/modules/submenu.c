@@ -2,6 +2,7 @@
 
 #include <gui/elements.h>
 #include <furi.h>
+#include <locale/locale.h>
 #include <m-array.h>
 
 struct Submenu {
@@ -210,7 +211,7 @@ void submenu_add_item(
         SubmenuModel * model,
         {
             item = SubmenuItemArray_push_new(model->items);
-            furi_string_set_str(item->label, label);
+            furi_string_set_str(item->label, TR(label));
             item->index = index;
             item->callback = callback;
             item->callback_context = callback_context;
@@ -234,7 +235,7 @@ void submenu_add_item_ex(
         SubmenuModel * model,
         {
             item = SubmenuItemArray_push_new(model->items);
-            furi_string_set_str(item->label, label);
+            furi_string_set_str(item->label, TR(label));
             item->index = index;
             item->callback_ex = callback;
             item->callback_context = callback_context;
@@ -255,7 +256,7 @@ void submenu_change_item_label(Submenu* submenu, uint32_t index, const char* lab
             for(SubmenuItemArray_it(it, model->items); !SubmenuItemArray_end_p(it);
                 SubmenuItemArray_next(it)) {
                 if(index == SubmenuItemArray_cref(it)->index) {
-                    furi_string_set_str(SubmenuItemArray_cref(it)->label, label);
+                    furi_string_set_str(SubmenuItemArray_cref(it)->label, TR(label));
                     break;
                 }
             }

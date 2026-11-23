@@ -177,7 +177,7 @@ void menu_add_item(
         MenuModel * model,
         {
             item = MenuItemArray_push_new(model->items);
-            item->label = label;
+            item->label = TR(label);
             item->icon = icon ? icon_animation_alloc(icon) : icon_animation_alloc(&A_Plugins_14);
             view_tie_icon_animation(menu->view, item->icon);
             item->index = index;
